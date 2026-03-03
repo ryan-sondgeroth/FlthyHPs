@@ -1,3 +1,5 @@
+# THIS IS A WORK IN PROGRESS AS I GET TIME TO UPDATE IT
+
 # FlthyHPs (Flthy Holoprojectors)
 
 This repo contains the `FlthyHPs_v2.1.ino` sketch and supporting documentation for controlling 3 R2 holoprojectors (Front/Rear/Top) with:
