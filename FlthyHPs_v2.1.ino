@@ -711,7 +711,7 @@ int freeRam();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-   Serial.begin(9600); // Initialize Serial communication
+   Serial.begin(9600); // NOLINT // Initialize Serial communication
    Wire.begin(Config::I2C_ADDRESS);
    Wire.onReceive(i2cEvent);
    randomSeed(analogRead(3));
