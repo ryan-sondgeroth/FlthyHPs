@@ -1,8 +1,6 @@
 # Guide to Using Your FlthyHPs v1.8
 - by Ryan Sondgeroth
-- flthymcnsty-192991478176
-- updated
-- August 22nd, 2018
+- flthymcnsty
 
 ## Table of Contents
 
