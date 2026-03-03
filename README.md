@@ -50,18 +50,40 @@ Typical system components (from the manual):
 - `Wire` (built-in)
 - [Adafruit NeoPixel](https://github.com/adafruit/Adafruit_NeoPixel)
 - [Adafruit PWM Servo Driver Library](https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library)
-- Big Happy Dude Slow Servo library (`Servos.h`)
+- Big Happy Dude Slow Servo library (`Servos.h`) vendored in this repo at `libraries/SlowServoPCA9685`
 
 Note: the standard Arduino Servo library is not used due to NeoPixel timing conflicts.
+
+### Vendored slow-servo library
+
+This repo includes `libraries/SlowServoPCA9685` so the required `Servos.h` dependency is versioned with the sketch.
+
+- Source in this repo: `libraries/SlowServoPCA9685`
+- License in upstream headers: GNU GPL v3 or later
+- Original copyright: Graham Short (2013)
 
 ## Setup and Flashing
 
 1. Install Arduino IDE.
 2. Install required libraries.
-3. Open `FlthyHPs_v2.1.ino`.
-4. Set board to **Arduino Pro or Pro Mini** and select your FTDI serial port.
-5. Adjust configuration values (if needed).
-6. Upload and verify boot behavior.
+3. Install Adafruit libraries directly from upstream repos:
+
+```bash
+./scripts/install-adafruit-libs.sh
+```
+
+4. Install vendored slow-servo library from this repo:
+
+```bash
+./scripts/install-libs.sh
+```
+
+Optional: set `ARDUINO_LIB_DIR` if your Arduino libraries path is not `~/Documents/Arduino/libraries`.
+
+5. Open `FlthyHPs_v2.1.ino`.
+6. Set board to **Arduino Pro or Pro Mini** and select your FTDI serial port.
+7. Adjust configuration values (if needed).
+8. Upload and verify boot behavior.
 
 ## Key Sketch Settings
 

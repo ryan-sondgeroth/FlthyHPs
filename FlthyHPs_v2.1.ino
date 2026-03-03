@@ -159,7 +159,6 @@
 ///                                  Required Libraries                                              ///
 ///                                                                                                  ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include <Wire.h>
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Servos.h>
@@ -712,7 +711,7 @@ int freeRam();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-   Serial.begin(9600);
+   Serial.begin(9600); // Initialize Serial communication
    Wire.begin(Config::I2C_ADDRESS);
    Wire.onReceive(i2cEvent);
    randomSeed(analogRead(3));
