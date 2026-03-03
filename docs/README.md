@@ -1,6 +1,7 @@
 # Guide to Using Your FlthyHPs
 by Ryan Sondgeroth
 flthymcnsty
+
 ![Manual image 1](manual_images/image1.jpeg)
 
 ## Table of Contents
@@ -50,6 +51,7 @@ Rhyno45 is a Wanker, in case Ya'll didn't know!
 ## What’s in the Kit
 Below is a picture of the complete contents of your HP kit.  Please make sure everything is included before you begin. A brief description of each part/assembly is included below.
 Each system comes pretested and pre-installed with the current sketch and default settings.
+
 ![Manual image 2](manual_images/image3.jpeg)
 
 ### 1. Arduino Pro Mini (5v 16MHz) on a Flthy Breakout Board.
@@ -57,14 +59,26 @@ The Flthy Breakout Board is a custom designed PCB* which conveniently breaks out
 The boards include a screw terminal for connecting your 5v power.  The newer v2 & v2.1 boards also break out a header row specifically for connecting to the Servo breakout board discussed below in item 2.
 There have been three versions of this board, with v2.1 incorporating slight design improvements.  Sketches work on either board version.
 *The breakout board designs are based on the publicly CAD Eagle files available on letsmakerobots.com.
+
+Original Board (v1)
+
 ![Manual image 3](manual_images/image5.jpeg)
+
+v2 Board 
+
 ![Manual image 4](manual_images/image7.jpeg)
+
+v2.1 Board
+
 ![Manual image 5](manual_images/image9.jpeg)
-Original Board (v1)                                  v2 Board                                             v2.1 Board
+                                                                              
+
 *The v2.1 breakout board incorporates a few design improvements making connections to it much easier.
 
 ### 2. Adafruit 16 Channel I2C Servo Breakout board*
+
 ![Manual image 6](manual_images/image10.jpeg)
+
 See product info at
 <https://www.adafruit.com/product/815>
 *Optional…Because some R2 Builders may not wish to articulate their HPs, some kits are available without this board.
@@ -73,13 +87,16 @@ See product info at
 For kits using the newer v2.1 Break Out Board, this is simply a basic straight 6 wire jumper cable as the header pins are broken out in the same arrangement as they appear on the Servo board including the V line.   This was done to simplify the connection process.
 For kits using the v2 Break Out Board, this is simply a basic straight 5 wire jumper cable as the header pins are broken out in the same arrangement as they appear on the Servo board minus the V line.   This was done to simplify the connection process.
 For kits using the v1 Breakout Board, a pre-wired jumper cable is used to connect the Servo Breakout Board to the Arduino.   It has the wires swapped correctly for proper connection.
+
 ![Manual image 7](manual_images/image12.jpeg)
+
 ![Manual image 8](manual_images/image14.jpeg)
 
 ### 4. HP LED Assemblies (Qty. 3)
 Each assembly consists of a Adafruit NeoPixel Jewel 7 LED Board (https://www.adafruit.com/products/2226), mounted on a custom 3D printed backplate via M2 nylon standoffs and connected with a 30cm 3 wire lead.
 There are now 3D printed back plates available for the recent Pwrsrce (1 5/8”-20 threads) aluminum halo-projector run as well as those for the BobC HPs (1 5/8”-24 threads).
 The center hole comes tapped for an M4 patterned bolt.
+
 ![Manual image 9](manual_images/image16.jpeg)
 
 ### 5. 1/4" Micro Foam Packaging Wrap (Qty. 3)
@@ -89,23 +106,29 @@ These 3 pieces can serve as a light diffuser between the HP’s LEDs and its len
 What Wires Go Where?
 Wiring Diagram for kits with Original v1 Breakout Boards
 The wiring for this system is straight forward.  Both boards take 5v with the servos and LEDs attached as shown.
+
 ![Manual image 10](manual_images/image18.jpeg)
+
 Attention for Kits Using the Original v1 Breakout Board!
 Pay special attention to the wiring between the v1 Arduino breakout board and the servo breakout board.  The servo breakout board uses a different pin layout than the standardized I2C pin layout used by other systems created by R2 Builders.  Incorrectly connecting the servo board can result in damage.  In order to help prevent this occurrence, each kit is provided with a 5 wire jumper cable (pictured below) which has been rearranged into the correct wiring pattern with each wire matching the color used in the wiring diagram above.
 Custom Wire for the Original v1 Board Design
+
 ![Manual image 11](manual_images/image19.jpeg)
+
 The v2 breakout board breaks out the pins in the same order as the servo board, simplifying the connection, and minimizing the confusing wiring.
 
 ## Hooking Up Your HPs v2
 What Wires Go Where?
 Wiring Diagram for kits with v2 Breakout Boards
 The wiring for this system is pretty straight forward.  Both boards take 5v with the  servos and LEDs attached as shown.
+
 ![Manual image 12](manual_images/image22.jpeg)
 
 ## Hooking Up Your HPs v2.1
 What Wires Go Where?
 Wiring Diagram for kits with v2.1 Breakout Boards
 The wiring for this system is straight forward.  Both boards take 5v with the servos and LEDs attached as shown but the v2.1 now includes a V pin on the Servo Board Pin Out, so you do not need to provide separate power to the I2C servo breakout board.
+
 ![Manual image 13](manual_images/image23.jpeg)
 
 ## Understanding the Sketch Settings
@@ -123,7 +146,9 @@ constexpr uint8_t I2C_ADDRESS = 0x19;  // 25 in hexadecimal
 ### 2. I2C Address of the Servo Board
 Similarly, we need to set a unique I2C address for the Adafruit Servo Breakout Board.
 Unlike our Arduino based control board, the Servo Breakout board is only capable of using an I2C address in the range between 64 and 126.   The specific address the board uses can be set using the set of 6 solder pads located on the top of the PCB.  By default, the board has an address of 64, and no changes are needed if you are not using the same board elsewhere on the I2C bus or have assigned another device with this address.
+
 ![Manual image 14](manual_images/image24.jpeg)
+
 However, if you do need to make changes to the boards address you can do so by using the solder pads to select a new address value.  To do so, you simply place a bead of soldier across the gap in the requisite pad pairs.
 The address value is determined just as you would using binary as show in this image.
 Once you have set your Servo board’s address, you will then need to change this address in the Sketch.  It can be changed with the following variable.   Again, please note that it is set using the hexadecimal equivalent of the address’s decimal value.
@@ -416,7 +441,9 @@ Note: This feature has little effect on servo commands as they are not usually a
 ## Replacement Back Plug
 In the event you need to print a plug, the model file can be found at: http://2gwd.com/FlthyHPs/Rear_Plug.
 Important: I have some tips for getting the best results when printing this plug.
+
 ![Manual image 15](manual_images/image26.png)
+
 First, if the model renders incredibly small in your 3d printing software, the units used are incorrect.  Just scale the size up by a factor of 25.4.
 Second, before printing, orient the plug so that the holes with the beveled and recessed edges face down towards the build plate.  This will ensure the edge that must thread into the HP is printed cleanly.
 Thirdly, when using Hatchbox brand 1.75mm PLA filament on my Printrbot Metal Plus, I have achieved good results using the following print setting.  Maybe you will too.
@@ -439,11 +466,15 @@ Once printed, you will need to manually tap the center hole for M4 pattern bolt.
 To assemble, I use 2-M2 Nylon Screws (cut to length), 2-M2 20mm male/female Nylon standoffs. and 2- M2 Nylon nuts to mount the NeoPixel Jewel to the Back plug.
 
 ## Finding Your Preset Servo Position Coordinates
+
 ![Manual image 16](manual_images/image28.jpeg)
+
 As mentioned previously in the explanation of the sketch’s HP position variable array, this system works best when we provide a complete set of 6 predetermined coordinate pairs per HP corresponding to specific position, namely the Down, Center, and Up positions along with 3 additional auxiliary positions.
 I have found the easiest way to do the is to use a set of servo testers with digital displays.  These servo testers will allow us to manually move each HP into the various positions and then quickly gather the two pulse width values in microseconds that make up each coordinate pair.
 I used a pair of G.T. Power Digital Servo Performance testers to gather my coordinates pretty quickly once my HPs were mounted in my dome and the control linkage installed.  A pair of these can be purchased for less than $50 from Banggood here:
+
 ![Manual image 17](manual_images/image32.png)
+
 <http://www.banggood.com/G_T_Power-Digital-Servo-Performance-Tester-p-999251.html>
 Before you begin, I must make it clear your HPs need to be mounted with servo plates/linkage in place.  These values are dependent on several variables and removing your HPs or their linkage you will more than likely require you to perform this process again.
 First, take a piece of masking tape or a stick-on label and number your two servo testers “1” and “2”.  This ensures the values gathered aren’t mixed up.  Tester “1” will always provide the first value in the coordinate pair, and tester “2” will provide the second value.
@@ -475,23 +506,33 @@ Download the current version of the required Adafruit Neopixel library from http
 Download the current version of the required Adafruit PWM Servo Driver library from https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.
 Download the current version of the required BHD Slow Servo library from https://drive.google.com/file/d/0B5B8A65frsBgZ3VpeGxpM1lzaFE/edit.
 Extract each of the three downloaded libraries into the “libraries” directory of your Arduino IDE installation.  They should stay in their individual folders inside the “libraries” directory.   See Image Below
+
 ![Manual image 18](manual_images/image33.jpeg)
+
 Open the downloaded FlthyHP sketch using the Arduino IDE software.  You may be prompted to create a new directory for the sketch if it is the first time opening it, select ok.  After this initial time, you can access the saved sketch through the file drop down menu within the Arduino IDE software.
 Make any desired changes to the sketch settings as explained in this manual.
 Once changes are made, plug your FTDI programmer into your computers USB port.  Your programmer may be different as there is a multitude of options available, but I use a FTDI Friend from Adafruit.  Some selections in the steps below may be different based on the programmer you are using.
+
 ![Manual image 19](manual_images/image34.png)
+
 Next plug your FTDI programmer into the 6 pin holes on the end of the Arduino Pro Mini.  Make sure you align the holes correctly as different models have the pin holes ordered differently.  Make sure the Tx pin on the FTDI programmer is plugged in to the Rx pin of the Arduino Pro Mini.  Likewise, the Rx pin of the FTDI programmer is plugged into the Tx pin of the Arduino Pro Mini.  The Arduino’s power LED should light up if power is correctly applied over USB through the programmer.   See Image ->
 In the Arduino IDE menu, select Tools->Board and ensure “Arduino Pro or Pro Mini” is selected from the board list. See Image Below.
+
 ![Manual image 20](manual_images/image35.jpeg)
+
 Likewise, in the Arduino IDE menu, select Tools->Port and select the port of the programmer you just connected.  It should have a name like “COM#” on a Windows machine or something like “cu-usbserial-XXXXXXX” on a Macintosh/Linux machine.  If no port shows up when connecting your programmer, you may need to install the correct drivers for your programmer.  This guide does not tackle that process as it is dependent on OS and programmer.  Refer to the programmer’s documentation for instructions. See Image Below
+
 ![Manual image 21](manual_images/image36.jpeg)
+
 At this point you are ready to upload the new sketch.  Select the upload button in the upper left corner of the Arduino IDE software window.  There are two steps to this process.   First, the software will verify the sketch ensuring there are no issues and errors.  If no errors are found the sketch is then compiled into machine code and uploaded/flashed to the Arduino Pro Mini.  This should only take a few moments, maybe 10 to 30 seconds max.  Watch the progress bar at the bottom of the software’s window, you will receive confirmation when the process is complete.  If there are any errors, they will appear in the lower black window of the software’s interface.  Most errors have to do with incorrect syntax or improperly installed libraries.
 At this point you are done and the sketch has been updated.
 
 ## Using the FlthyHPs with Marcduino v1.5/v2
 For those wishing to utilize their MarcDuino v1.5 or v2 boards and the R2-Touch app to control their FlthyHPs,  Marc added I2C communication support to his system and a pretty slick command structure to facilitate it.
 To get started, you will first need to ensure you have both the MarcDuino Master board and the FlthyHPs board connected via the I2C pins.  This is accomplished by simply connecting….
+
 ![Manual image 22](manual_images/image37.png)
+
 the MarcDuino SDA pin to the the FlthyHP D pin,
 the MarcDuino SCL pin the the FlthyHP C pin,
 and the MarcDuino - (ground) pin to the FlthyHP G pin.
@@ -527,20 +568,3 @@ You will have to do some testing yourself, as it isn’t possible to know every 
 I am not going to go into much depth regarding the process for adding and assigning custom commands to the R2 Touch mobile app.  Marc has provided wonderful documentation regarding the process on his web site here:
 <http://www.curiousmarc.com/r2-touch-r2-d2-remote-control-iphone-app/customizing-r2-touch>
 That’s all there is to getting these two systems working together.  I hope you guys find my explanation clear and helpful.
-
-## v2.1 Sketch Addendum
-This addendum updates the original v1.8 manual content to match FlthyHPs_v2.1.ino.
-- Device designators include grouped targets: X = Front+Rear, Y = Front+Top, Z = Rear+Top.
-- LED clear/auto commands with Off Color use D0991 and D0992 (not D991/D992).
-- Special sequences include S6 (all on, random LED auto twitch, Off Color disabled).
-- Timed command example for rainbow should use 06 (A006|45).
-- Serial supports built-in help commands: help and ?.
-- I2CADDRESS -> Config::I2C_ADDRESS
-- SERVOI2CADDRESS -> Config::SERVO_I2C_ADDRESS
-- LEDpins -> LED_PINS
-- HPpins -> HP_PINS
-- BRIGHT -> BRIGHTNESS (default 150)
-- DIMPULSESPEED -> DIM_PULSE_SPEED and DIM_PULSE_SPEED_RANGE
-- Config::ENABLE_SERVO_EASING (master toggle, default true)
-- Config::DEFAULT_EASING_DURATION = 600 ms
-- Config::EASING_UPDATE_INTERVAL = 20 ms
