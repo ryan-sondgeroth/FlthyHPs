@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.pololu.com)",
+      "Read(//Users/ryansondgeroth/Documents/Arduino/libraries/PololuMaestro/**)"
+    ]
+  }
+}
