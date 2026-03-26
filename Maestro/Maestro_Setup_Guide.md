@@ -25,14 +25,14 @@ The process has three phases:
 
 ## Channel Assignments
 
-| Channel | HP | Axis |
-|---------|------------|------|
-| 0 | Front HP | Pan (left/right) |
-| 1 | Front HP | Tilt (up/down) |
-| 2 | Rear HP | Pan (left/right) |
-| 3 | Rear HP | Tilt (up/down) |
-| 4 | Top HP | Pan (left/right) |
-| 5 | Top HP | Tilt (up/down) |
+| Channel | Name | HP | Axis |
+|---------|------|------------|------|
+| 0 | Front 1 | Front HP | Pan (left/right) |
+| 1 | Front 2 | Front HP | Tilt (up/down) |
+| 2 | Rear 1 | Rear HP | Pan (left/right) |
+| 3 | Rear 2 | Rear HP | Tilt (up/down) |
+| 4 | Top 1 | Top HP | Pan (left/right) |
+| 5 | Top 2 | Top HP | Tilt (up/down) |
 
 > Note: Which axis is "pan" vs "tilt" depends on your physical installation. The labels above assume a typical R2 HP mounting. If your axes are swapped, simply swap the channel numbers in the script.
 
@@ -135,35 +135,35 @@ The comment showing the µs value is just for your reference — update it too s
 
 ### Subroutine reference
 
-| Subroutine | HP | Position |
-|---|---|---|
-| 0 | Front | center |
-| 1 | Front | up |
-| 2 | Front | down |
-| 3 | Front | left |
-| 4 | Front | upper-left |
-| 5 | Front | lower-left |
-| 6 | Front | right |
-| 7 | Front | upper-right |
-| 8 | Front | lower-right |
-| 9 | Rear | center |
-| 10 | Rear | up |
-| 11 | Rear | down |
-| 12 | Rear | left |
-| 13 | Rear | upper-left |
-| 14 | Rear | lower-left |
-| 15 | Rear | right |
-| 16 | Rear | upper-right |
-| 17 | Rear | lower-right |
-| 18 | Top | center |
-| 19 | Top | up |
-| 20 | Top | down |
-| 21 | Top | left |
-| 22 | Top | upper-left |
-| 23 | Top | lower-left |
-| 24 | Top | right |
-| 25 | Top | upper-right |
-| 26 | Top | lower-right |
+| Subroutine | HP | Servo 1 (Pan) | Servo 2 (Tilt) | Position |
+|---|---|---|---|---|
+| 0 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | center |
+| 1 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | up |
+| 2 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | down |
+| 3 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | left |
+| 4 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | upper-left |
+| 5 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | lower-left |
+| 6 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | right |
+| 7 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | upper-right |
+| 8 | Front | Ch 0 — Front 1 | Ch 1 — Front 2 | lower-right |
+| 9 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | center |
+| 10 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | up |
+| 11 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | down |
+| 12 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | left |
+| 13 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | upper-left |
+| 14 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | lower-left |
+| 15 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | right |
+| 16 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | upper-right |
+| 17 | Rear | Ch 2 — Rear 1 | Ch 3 — Rear 2 | lower-right |
+| 18 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | center |
+| 19 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | up |
+| 20 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | down |
+| 21 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | left |
+| 22 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | upper-left |
+| 23 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | lower-left |
+| 24 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | right |
+| 25 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | upper-right |
+| 26 | Top | Ch 4 — Top 1 | Ch 5 — Top 2 | lower-right |
 
 ---
 
