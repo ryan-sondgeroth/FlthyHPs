@@ -60,8 +60,6 @@ The v3 system replaces the separate breakout board + PCA9685 combo with a single
 - Moving to the Pololu Micro Maestro eliminates the tedious per-servo position configuration previously done in the sketch
 - Servo travel limits, speeds, and positions are configured visually using the Maestro Control Center application, with no sketch changes required
 
-KiCad project, BOM, and fabrication files: [`Maestro/hardware/`](Maestro/hardware/)
-
 Servo control and calibration: [`Maestro/Maestro_Setup_Guide.md`](Maestro/Maestro_Setup_Guide.md)
 
 ### Legacy hardware (v1/v2/v2.1)
