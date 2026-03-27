@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.oemsecrets.com)",
+      "WebFetch(domain:www.arrow.com)",
+      "WebFetch(domain:www.newark.com)",
+      "Bash(grep -v \"^$\")",
+      "WebFetch(domain:www.findchips.com)",
+      "Bash(zip FilthyHPs_Maestro-Gerbers.zip FilthyHPs_Maestro-F_Cu.gtl FilthyHPs_Maestro-B_Cu.gbl FilthyHPs_Maestro-F_Paste.gtp FilthyHPs_Maestro-F_Silkscreen.gto FilthyHPs_Maestro-B_Silkscreen.gbo FilthyHPs_Maestro-F_Mask.gts FilthyHPs_Maestro-B_Mask.gbs FilthyHPs_Maestro-Edge_Cuts.gm1 FilthyHPs_Maestro.drl)",
+      "WebFetch(domain:yaqeen.jlcpcb.com)",
+      "WebFetch(domain:jlcpcb.com)",
+      "WebFetch(domain:www.lcsc.com)",
+      "WebFetch(domain:www.kyocera-avx.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:lcsc.com)",
+      "Bash(curl -s \"https://cdfer.github.io/jlcpcb-parts-database/jlcpcb-components-basic-preferred.csv\")",
+      "Read(//Users/ryansondgeroth/Documents/GitHub/FlthyHPs/**)",
+      "WebFetch(domain:wmsc.lcsc.com)",
+      "WebFetch(domain:yaqwsx.github.io)",
+      "WebFetch(domain:lrks.github.io)",
+      "WebFetch(domain:forum.pololu.com)",
+      "Read(//Users/ryansondgeroth/.claude/projects/**)",
+      "Bash(ls /Users/ryansondgeroth/Documents/GitHub/FlthyHPs/Maestro/hardware/*.kicad_pcb)",
+      "Bash(/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli sch:*)",
+      "Bash(kicad-cli pcb:*)",
+      "Read(//Applications/**)",
+      "Bash(zip -r ../FilthyHPs_Maestro_fab.zip .)",
+      "Bash(zip -j FilthyHPs_Maestro-Gerbers.zip FilthyHPs_Maestro-F_Cu.gtl FilthyHPs_Maestro-B_Cu.gbl FilthyHPs_Maestro-F_Paste.gtp FilthyHPs_Maestro-F_Silkscreen.gto FilthyHPs_Maestro-B_Silkscreen.gbo FilthyHPs_Maestro-F_Mask.gts FilthyHPs_Maestro-B_Mask.gbs FilthyHPs_Maestro-Edge_Cuts.gm1 FilthyHPs_Maestro-F_Courtyard.gbr FilthyHPs_Maestro-B_Courtyard.gbr FilthyHPs_Maestro.drl)",
+      "Bash(sed -i '' 's|${KIPRJMOD}/kicad_libraries/G-188_MUR.step|${KIPRJMOD}/kicad_libraries/3d_models/G-188_MUR.step|g' /Users/ryansondgeroth/Documents/GitHub/FlthyHPs/Maestro/hardware/kicad_libraries/footprints/G-188_MUR.kicad_mod)",
+      "Bash(sed -i '' 's|${KIPRJMOD}/kicad_libraries/BZX84C5V1LT1G.STEP|${KIPRJMOD}/kicad_libraries/3d_models/BZX84C5V1LT1G.STEP|g' /Users/ryansondgeroth/Documents/GitHub/FlthyHPs/Maestro/hardware/kicad_libraries/footprints/SOT95P240X111-3N.kicad_mod)",
+      "Bash(sed -i '' 's|${KIPRJMOD}/kicad_libraries/d42v55fx-step-down-voltage-regulator.step|${KIPRJMOD}/kicad_libraries/3d_models/d42v55fx-step-down-voltage-regulator.step|g' /Users/ryansondgeroth/Documents/GitHub/FlthyHPs/Maestro/hardware/kicad_libraries/footprints/Converter_DCDC_Pololu_D42V55F5.kicad_mod)",
+      "Bash(mkdir -p \"/Users/ryansondgeroth/Documents/GitHub/FlthyHPs/Maestro/hardware/renders\")",
+      "Bash(cp \"Screenshot 2026-03-27 at 12.17.36 AM.png\" \"../Maestro/hardware/renders/render_top.png\")",
+      "Bash(cp \"Screenshot 2026-03-27 at 12.18.51 AM.png\" \"../Maestro/hardware/renders/render_iso_front.png\")",
+      "Bash(cp \"Screenshot 2026-03-27 at 12.19.07 AM.png\" \"../Maestro/hardware/renders/render_iso_back.png\")",
+      "Bash(cp \"Screenshot 2026-03-27 at 12.19.19 AM.png\" \"../Maestro/hardware/renders/render_iso_side.png\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 -c \"import shutil; shutil.rmtree\\(''/Users/ryansondgeroth/Documents/GitHub/FlthyHPs/renders''\\)\")"
+    ],
+    "additionalDirectories": [
+      "/Users/ryansondgeroth/.claude/projects/-Users-ryansondgeroth-Documents-GitHub-FlthyHPs"
+    ]
+  }
+}

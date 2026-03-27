@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:www.pololu.com)",
-      "Read(//Users/ryansondgeroth/Documents/Arduino/libraries/PololuMaestro/**)"
+      "Read(//Users/ryansondgeroth/Documents/Arduino/libraries/PololuMaestro/**)",
+      "Bash(rm -rf Jrk SimpleMotorController SimpleMotorControllerG2 UsbAvrProgrammer UsbWrapper_Linux UsbWrapper_Windows 99-pololu.rules Makefile .gitignore)",
+      "Bash(rm -rf Maestro/Bytecode Maestro/MaestroAdvancedExample Maestro/MaestroEasyExample Maestro/MaestroEasyExampleCpp Maestro/MaestroEasyExampleVb Maestro/Sequencer Maestro/Usc Maestro/Usc.sln Maestro/UscCmd)"
     ]
   }
 }

@@ -1,0 +1,7 @@
+(sym_lib_table
+  (lib (name "FlthyHPs_Zener")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/symbols/BZX84C5V1LT1G.kicad_sym")(options "")(descr "BZX84C5V1LT1G 5.1V Zener Diode SOT-23"))
+  (lib (name "FlthyHPs_MOSFET")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/symbols/SI2323DS.kicad_sym")(options "")(descr "SI2323DS P-Channel MOSFET SOT-23 (superseded by AO3401A)"))
+  (lib (name "FlthyHPs_TantCap")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/symbols/T520D477M010ATE045.kicad_sym")(options "")(descr "Kemet T520D477M010ATE045 470uF 10V Polymer Tantalum SMD D-Case (superseded)"))
+  (lib (name "FlthyHPs_CeramicCap")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/symbols/GCM188R71E104KA57D.kicad_sym")(options "")(descr "Murata GCM188R71E104KA57D 100nF 25V X7R Ceramic Capacitor 0402 SMD"))
+  (lib (name "FlthyHPs_D42V55F5")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/symbols/D42V55F5.kicad_sym")(options "")(descr "Pololu D42V55F5 5V 5.5A Step-Down Voltage Regulator"))
+)

@@ -286,6 +286,9 @@ namespace Config {
 ///*****  NOTE: No OUTPUT_ENABLED_PIN needed - the Maestro handles        *****///
 ///*****        servo power directly.                                     *****///
 ///*****                                                                  *****///
+///*****  MAESTRO_RESET_PIN wires to Maestro RST. Pulled low briefly on  *****///
+///*****  startup to reset the Maestro each time the Arduino boots.       *****///
+///*****                                                                  *****///
 //////////////////////////////////////////////////////////////////////////////////
 
 // Hardware Pins
@@ -297,6 +300,7 @@ const uint8_t LED_PINS[Config::HP_COUNT] PROGMEM = {2, 3, 4};  // {Front, Rear, 
 const uint8_t HP_PINS[Config::HP_COUNT][Config::SERVOS_PER_HP] PROGMEM = {{0,1}, {2,3}, {4,5}};
 
 constexpr uint8_t STATUS_LED_PIN = 13;
+constexpr uint8_t MAESTRO_RESET_PIN = 7;  // Wire to Maestro RST pin
 
 //////////////////////////////////////////////////////////////////////////////////
 ///*****                          LED Brightness                          *****///
@@ -704,6 +708,14 @@ void setup() {
 
    // Status LED
    pinMode(STATUS_LED_PIN, OUTPUT);
+
+   // Reset Maestro on startup so it always boots into a clean state.
+   // Wire MAESTRO_RESET_PIN to the Maestro RST pin.
+   pinMode(MAESTRO_RESET_PIN, OUTPUT);
+   digitalWrite(MAESTRO_RESET_PIN, LOW);
+   delay(10);
+   digitalWrite(MAESTRO_RESET_PIN, HIGH);
+   delay(100);  // Give Maestro time to boot before sending serial commands
 
    // Start Maestro serial interface
    maestroSerial.begin(MAESTRO_BAUD);

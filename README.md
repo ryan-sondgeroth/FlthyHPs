@@ -19,27 +19,59 @@ This README is based on the manual in [`docs/Guide to Using Your FlthyHPs v1.8 .
 
 ## Hardware
 
-Typical system components (from the manual):
+## PCB Renders
 
-- Arduino Pro Mini (5V, 16MHz) on Flthy breakout
-- Adafruit 16-channel PCA9685 servo driver
-- 3 HP NeoPixel assemblies (7 LED Jewel each)
-- 6 servos (2 per HP)
-- 5V supply with sufficient current headroom
+| Top | Isometric Front |
+|-----|----------------|
+| ![Top view](Maestro/hardware/renders/render_top.png) | ![Isometric front](Maestro/hardware/renders/render_iso_front.png) |
+
+| Isometric Back | Side |
+|---------------|------|
+| ![Isometric back](Maestro/hardware/renders/render_iso_back.png) | ![Side view](Maestro/hardware/renders/render_iso_side.png) |
+
+---
+
+### FlthyHPs Maestro v3 PCB (current)
+
+The v3 system replaces the separate breakout board + PCA9685 combo with a single custom PCB: **FilthyHPs_Maestro**.
+
+- **Arduino Pro Mini** (5V, 16MHz) — plugs into U1 headers
+- **Pololu Micro Maestro 6-Channel** servo controller — plugs into U2 headers (replaces PCA9685)
+- **Pololu D24V50F5** 5V 5A regulator — plugs into U3 headers
+- 6 servos (2 per HP) via Maestro channels 0–5
+- 3 HP NeoPixel assemblies (7 LED Jewel each) via Arduino D2/D3/D4
+- Power input: 7–36V unregulated via J1 screw terminal
+- On-board P-ch MOSFET (Q1) ideal diode for VIN_RAW servo power gate
+- On-board bulk capacitance: 100µF at servo rail (C2), 100µF at VIN_RAW (C9), 100µF at 5V rail (C7)
+
+KiCad project, BOM, and fabrication files: [`Maestro/hardware/`](Maestro/hardware/)
+
+Servo control and calibration: [`Maestro/Maestro_Setup_Guide.md`](Maestro/Maestro_Setup_Guide.md)
+
+### Legacy hardware (v1/v2/v2.1)
+
+Earlier versions used a Flthy breakout board + Adafruit PCA9685 servo driver. The v2.1 sketch still supports this hardware. See [`docs/README.md`](docs/README.md) for the full legacy wiring guide.
 
 ## Wiring (Default)
 
-### Arduino pins
+### Arduino pins (v3 Maestro PCB)
 
 - `D2` Front HP LED data
 - `D3` Rear HP LED data
 - `D4` Top HP LED data
 - `D9` RC input (optional, if enabled)
-- `D10` PCA9685 `OE` (servo output enable control)
+- `D10` Maestro `RST` (servo output enable control)
 - `D13` status LED
-- `A4/A5` I2C SDA/SCL
+- `A4/A5` I2C SDA/SCL (to J6/J7 I2C headers)
+- `TX/RX` Serial to Maestro (via J2 Serial header)
 
-### PCA9685 channels
+### Maestro channels (v3)
+
+- `0/1` Front HP servos
+- `2/3` Rear HP servos
+- `4/5` Top HP servos
+
+### Legacy PCA9685 channels (v1/v2/v2.1)
 
 - `0/1` Front HP servos
 - `2/3` Rear HP servos
