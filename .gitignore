@@ -1,3 +1,19 @@
 # KiCad backups
 *-backups/
 *.bak
+
+# Board design files
+*.kicad_pcb
+*.kicad_prl
+*.kicad_pro
+*.kicad_sch
+*.kicad_sym
+*.kicad_mod
+*.step
+fp-info-cache
+fp-lib-table
+sym-lib-table
+Maestro/hardware/kicad_libraries/
+Maestro/hardware/fabrication/
+Maestro/hardware/BOM.md
+Maestro/hardware/*.zip
