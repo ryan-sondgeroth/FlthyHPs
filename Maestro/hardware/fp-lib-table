@@ -1,4 +1,0 @@
-(fp_lib_table
-  (version 7)
-  (lib (name "kicad_libraries")(type "KiCad")(uri "${KIPRJMOD}/kicad_libraries/footprints")(options "")(descr "FlthyHPs project footprints"))
-)
