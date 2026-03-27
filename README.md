@@ -40,7 +40,7 @@ The v3 system replaces the separate breakout board + PCA9685 combo with a single
 - **Pololu D24V50F5** 5V 5A regulator — plugs into U3 headers
 - 6 servos (2 per HP) via Maestro channels 0–5
 - 3 HP NeoPixel assemblies (7 LED Jewel each) via Arduino D2/D3/D4
-- I2C headers (J6, J7) for external peripherals and accepting commands from I2C controllers (e.g. MarcDuino)
+- I2C headers (J6, J7) for external peripherals and accepting commands from I2C controllers
 - Serial header (J2) for sending commands to the Arduino sketch
 
 **Power input:**
@@ -55,6 +55,10 @@ The v3 system replaces the separate breakout board + PCA9685 combo with a single
 **Improved power stability over previous versions:**
 - Bulk capacitance across the input, servo, and logic rails absorbs current spikes and smooths supply transients
 - Decoupling capacitors at key IC supply pins suppress high-frequency noise
+
+**Simplified servo setup over previous versions:**
+- Moving to the Pololu Micro Maestro eliminates the tedious per-servo position configuration previously done in the sketch
+- Servo travel limits, speeds, and positions are configured visually using the Maestro Control Center application, with no sketch changes required
 
 KiCad project, BOM, and fabrication files: [`Maestro/hardware/`](Maestro/hardware/)
 
