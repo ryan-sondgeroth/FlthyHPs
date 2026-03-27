@@ -46,7 +46,7 @@ The v3 system replaces the separate breakout board + PCA9685 combo with a single
 - On-board 500mA PTC resettable fuse (F1) on the 5V logic rail
 - On-board bulk capacitance: 100µF at servo rail (C2), 100µF at VIN_RAW (C9), 100µF at 5V rail (C7)
 - I2C expansion headers (J6, J7) for external peripherals
-- Serial header (J2) for Maestro TX/RX passthrough
+- Serial header (J2) for sending commands to the Arduino sketch
 
 KiCad project, BOM, and fabrication files: [`Maestro/hardware/`](Maestro/hardware/)
 
