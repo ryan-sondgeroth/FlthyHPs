@@ -40,9 +40,13 @@ The v3 system replaces the separate breakout board + PCA9685 combo with a single
 - **Pololu D24V50F5** 5V 5A regulator — plugs into U3 headers
 - 6 servos (2 per HP) via Maestro channels 0–5
 - 3 HP NeoPixel assemblies (7 LED Jewel each) via Arduino D2/D3/D4
-- Power input: 7–36V unregulated via J1 screw terminal
+- Power input: 7–36V unregulated via J1 screw terminal, or regulated 5V direct via J8 screw terminal
 - On-board P-ch MOSFET (Q1) ideal diode for VIN_RAW servo power gate
+- On-board 5.1V Zener clamps (D1, D2) protecting Maestro and Arduino signal lines
+- On-board 500mA PTC resettable fuse (F1) on the 5V logic rail
 - On-board bulk capacitance: 100µF at servo rail (C2), 100µF at VIN_RAW (C9), 100µF at 5V rail (C7)
+- I2C expansion headers (J6, J7) for external peripherals
+- Serial header (J2) for Maestro TX/RX passthrough
 
 KiCad project, BOM, and fabrication files: [`Maestro/hardware/`](Maestro/hardware/)
 
