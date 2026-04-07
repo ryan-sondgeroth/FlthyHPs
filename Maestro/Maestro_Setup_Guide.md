@@ -59,7 +59,7 @@ These are your hardware safety limits. The Maestro will clamp any command to wit
 
 **Home position:** Leave unset for now. After calibration you can optionally set this to your center position value so `goHome()` on startup moves all HPs to center.
 
-Click **Apply Settings** and **Save to Device** before moving on.
+Click **Apply Settings** before moving on. If you want a backup on your computer, use **File > Save settings file...**
 
 ---
 
@@ -112,7 +112,7 @@ Go back to **Channel Settings** and update Min/Max for each channel:
 
 This gives a small buffer while ensuring the Maestro will always clamp any out-of-range command before it reaches the servo.
 
-Click **Apply Settings** and **Save to Device**.
+Click **Apply Settings**. If you want a backup on your computer, use **File > Save settings file...**
 
 ---
 
@@ -169,10 +169,31 @@ The comment showing the µs value is just for your reference — update it too s
 
 ## Phase 4 — Load the Script onto the Maestro
 
-1. In Maestro Control Center, go to the **Script** tab
-2. Click **Load Script** and select your updated `FlthyHPs_Maestro_Script.mscr`
-3. Click **Apply Script**
-4. Go to **File > Save Settings to Device** to make the script persistent across power cycles
+If the Script tab is awkward or read-only on your Windows machine, use **UscCmd** instead. This preserves the channel settings you already calibrated.
+
+1. Connect the Maestro over USB
+2. Open a Windows Command Prompt
+3. Export the current Maestro settings:
+
+```bat
+UscCmd --getconf "%USERPROFILE%\Desktop\FlthyHPs_Maestro_Settings.txt"
+```
+
+4. Open `FlthyHPs_Maestro_Settings.txt` in a text editor
+5. Find the `<Script>` section and replace everything between `<Script>` and `</Script>` with the contents of `FlthyHPs_Maestro_Script.mscr`
+6. Save the edited settings file
+7. Load the updated settings back onto the Maestro:
+
+```bat
+UscCmd --configure "%USERPROFILE%\Desktop\FlthyHPs_Maestro_Settings.txt"
+```
+
+8. In Maestro Control Center, verify **Run script on startup** is enabled if you want the script to start automatically after power-up
+
+Notes:
+- `UscCmd` is installed with the Pololu Maestro Windows software
+- This method copies the script into your current Maestro configuration without forcing you to paste into the Script tab
+- Keep the exported settings file as a backup; it includes your script source and channel settings
 
 ---
 
