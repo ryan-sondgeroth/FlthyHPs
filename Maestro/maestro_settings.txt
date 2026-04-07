@@ -23,7 +23,7 @@
     <Channel name="" mode="Servo" min="4736" max="7232" homemode="Off" home="4736" speed="0" acceleration="0" neutral="6000" range="1905" />
   </Channels>
   <Sequences />
-  <Script>
+  <Script ScriptDone="true">
 # ============================================================
 # FlthyHPs Maestro Script
 # by Ryan Sondgeroth / FlthyMcNsty

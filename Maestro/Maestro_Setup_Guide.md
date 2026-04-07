@@ -180,7 +180,7 @@ UscCmd --getconf "%USERPROFILE%\Desktop\FlthyHPs_Maestro_Settings.txt"
 ```
 
 4. Open `FlthyHPs_Maestro_Settings.txt` in a text editor
-5. Find the `<Script>` section and replace everything between `<Script>` and `</Script>` with the contents of `FlthyHPs_Maestro_Script.mscr`
+5. Find the existing `<Script ...>` section and replace only the text between the opening `<Script ...>` tag and the closing `</Script>` tag with the contents of `FlthyHPs_Maestro_Script.mscr`
 6. Save the edited settings file
 7. Load the updated settings back onto the Maestro:
 
@@ -194,6 +194,7 @@ Notes:
 - `UscCmd` is installed with the Pololu Maestro Windows software
 - This method copies the script into your current Maestro configuration without forcing you to paste into the Script tab
 - Keep the exported settings file as a backup; it includes your script source and channel settings
+- Do not replace the opening `<Script ...>` tag itself; exported files can include required attributes such as `ScriptDone`
 
 ---
 
