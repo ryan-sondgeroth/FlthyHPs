@@ -29,8 +29,10 @@
 ///            getMovingState() has a known bug on the 6-channel Maestro.                                     ///
 ///            Moved all servo position data out of sketch into Maestro script                                ///
 ///            (FlthyHPs_Maestro_Script.mscr). positionHP() now calls                                        ///
-///            restartScriptAtSubroutine() - no sketch changes needed to calibrate                            ///
-///            for a new installation, just update and reload the Maestro script.                             ///
+///            restartScript(subroutine) for base positions, and M## can run custom                          ///
+///            Maestro subroutines defined in the script.                                                     ///
+///            No sketch changes are needed for position calibration; just update                             ///
+///            and reload the Maestro script.                                                                 ///
 ///            Removed ENABLEBASICHP mode and RC control - positioning is now                                 ///
 ///            fully script-driven with Maestro hardware min/max limits as safety.                            ///
 ///     v2.1 - Added smooth servo acceleration/deceleration (easing):                                        ///
@@ -68,10 +70,11 @@
 ///                                                                                                           ///
 ///     Commands and Structure                                                                                ///
 ///                                                                                                           ///
-///     DT##[C][S][|duration] or S##/M##                                                                        ///
+///     DT##[C][S][|duration]                                                                                ///
+///     M##                                                                                                 ///
 ///                                                                                                           ///
-///     Note: In DT commands, C is the optional LED color value. In standalone                              ///
-///           commands, C is the first character and means "custom Maestro subroutine".                    ///
+///     Note: In DT commands, C is the optional LED color value. M## is a                                 ///
+///           standalone command that runs a custom Maestro subroutine.                                   ///
 ///                                                                                                           ///
 ///     D - the HP designator                                                                                 ///
 ///          F - Front HP                                                                                     ///
@@ -82,8 +85,8 @@
 ///          Y - Front & Top HPs                                                                              ///
 ///          Z - Rear & Top HPs                                                                               ///
 ///          S - Sequences (See Below)                                                                        ///
-///          M - Run a custom Maestro subroutine directly ## is custom Subroutine ID in setttings             ///
-///              stored on Maestro.                                                                           ///
+///          M - Run a custom Maestro subroutine directly. ## is the custom                               ///
+///              subroutine ID stored on the Maestro.                                                        ///
 ///                                                                                                           ///
 ///     T - the Sequence Type is either 0-Led Fuctions and 1-Servo Functions                                  ///
 ///                                                                                                           ///

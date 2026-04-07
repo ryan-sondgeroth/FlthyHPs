@@ -5,7 +5,7 @@
 
 ## Overview
 
-All servo position data for the FlthyHPs system lives in **FlthyHPs_Maestro_Script.mscr**, not in the Arduino sketch. This means calibrating a new installation is entirely done in **Maestro Control Center** — no code changes required.
+All base servo position data for the FlthyHPs system lives in **FlthyHPs_Maestro_Script.mscr**, not in the Arduino sketch. This means calibrating a new installation is done in **Maestro Control Center** — no sketch changes are needed for position tuning. Custom routines can be added later starting at subroutine `27`.
 
 The process has three phases:
 1. Configure channel settings and safety limits
@@ -57,7 +57,7 @@ These are your hardware safety limits. The Maestro will clamp any command to wit
 
 **Acceleration:** Leave at `0` during calibration. Again, the sketch sets this at runtime.
 
-**Home position:** Leave unset for now. After calibration you can optionally set this to your center position value so `goHome()` on startup moves all HPs to center.
+**Home position:** Leave unset for now. The sketch explicitly centers each HP on startup, so you do not need to rely on Maestro home positions.
 
 Click **Apply Settings** before moving on. If you want a backup on your computer, use **File > Save settings file...**
 
@@ -135,6 +135,8 @@ The comment showing the µs value is just for your reference — update it too s
 
 Important: these position subroutines are launched from the Arduino sketch with Maestro `restartScript(subroutine)`, so each one must end with `quit`. Using `return` here causes a subroutine call stack overflow/underflow error on the Maestro.
 
+Custom Maestro routines start at subroutine `27`. Use `M27`, `M28`, and so on from the sketch to run them. Keep the base position routines `0-26` intact, and put any reusable pose helper subroutines at the end of the file so the base table stays easy to scan.
+
 ### Subroutine reference
 
 | Subroutine | HP | Servo 1 (Pan) | Servo 2 (Tilt) | Position |
@@ -182,6 +184,7 @@ Important:
 - Pololu stores the script source code on the PC and in settings files saved by **Maestro Control Center**, not on the Maestro itself
 - `UscCmd --getconf` is useful for exporting device settings, but it is not a reliable starting point for hand-authoring a `<Script>` block
 - Once you have a valid settings file saved from Maestro Control Center, you can use `UscCmd --configure FILE` later to load that complete settings file onto another Maestro
+- If you need to re-load only the custom routine edits, remember that the sketch uses `M##` for direct Maestro subroutines and `DT...` for the normal HP commands
 
 ---
 
@@ -189,10 +192,11 @@ Important:
 
 With the Arduino sketch running and the Maestro connected:
 
-1. Power everything up — the sketch calls `goHome()` on startup which triggers subroutine 0 (center) for each HP. All three HPs should move to center.
+1. Power everything up — the sketch centers each HP on startup by sending the base center position. All three HPs should move to center.
 2. Send a twitch command (`A104`) and watch the HPs move through random positions. Verify no binding or stalling.
-3. Send a wag command (`A105` for left/right, `A106` for up/down) and verify the motion looks correct.
+3. Send a wag command (`A105` for left/right, `A106` for up/down) and verify the motion looks correct. You can append `S`, `M`, or `F` for speed, for example `A105|20S`.
 4. Send preset position commands (`F101P` where P = 0–8) to individually verify each named position on the Front HP.
+5. Send `M27` to verify the custom Maestro clock routine runs after the base positions are loaded.
 
 If any position looks wrong or causes binding:
 - Go back to the Status tab, find the correct values
@@ -206,10 +210,10 @@ If any position looks wrong or causes binding:
 
 The script has room for additional positions well within the Maestro's script memory limit. To add a position:
 
-1. Add a new subroutine at the end of the relevant HP block in the script
-2. Increment `Config::HP_POSITIONS` in the sketch from `9` to the new total
-3. Upload the updated sketch once
-4. All new positions are immediately available to `positionHP()`, `twitchHP()`, and random movement
+1. Leave subroutines `0-26` alone unless you are changing the base position table.
+2. Add new custom subroutines starting at `27` and above.
+3. Keep any reusable pose helper subroutines at the end of the file so the base table stays readable.
+4. If you add new base positions, increment `Config::HP_POSITIONS` in the sketch from `9` to the new total and update both the sketch and script together.
 
 ---
 

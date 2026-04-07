@@ -35,8 +35,8 @@
 # --- HP1 (Front)  channels 0, 1 ---
 # Base positions 0-26 are the standard HP movement table. Keep these entries
 # in sync with the position values used by the custom routines below.
-# Do not edit subroutines 0-26.  Position values are set in the posse subroutines
-# at the bottom of the script.  
+# Do not edit subroutines 0-26 unless you are changing the built-in base
+# positioning table. Custom routines start at subroutine 27 and above.
 
 sub hp1_center        # subroutine 0
   hp1_center_pose
