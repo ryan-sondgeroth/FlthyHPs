@@ -2,11 +2,15 @@
 # FlthyHPs Maestro Script
 # by Ryan Sondgeroth / FlthyMcNsty
 #
-# 3 HPs x 9 positions = 27 subroutines
+# 3 HPs x 9 base positions = 27 subroutines
 # Subroutine index = (hp * 9) + position
 #   HP1 (Front) = subroutines  0 -  8   channels 0, 1
 #   HP2 (Rear)  = subroutines  9 - 17   channels 2, 3
 #   HP3 (Top)   = subroutines 18 - 26   channels 4, 5
+# Do not edit subroutines 0-26 unless you are changing the built-in base
+# positioning table. Add custom routines starting at subroutine 27 and above.
+# Shared pose helpers are defined last and are the source of truth for all
+# position values.
 #
 # Position layout (matches HP_POSITIONS order in sketch):
 #   0 = center
@@ -29,142 +33,312 @@
 # ============================================================
 
 # --- HP1 (Front)  channels 0, 1 ---
+# Base positions 0-26 are the standard HP movement table. Keep these entries
+# in sync with the position values used by the custom routines below.
+# Do not edit subroutines 0-26.  Position values are set in the posse subroutines
+# at the bottom of the script.  
 
-ququitsquitreub hp1_center        # subroutine 0
-  5508 0 servo        # ch0 = 1377us
-  6824 1 servo        # ch1 = 1706us
+sub hp1_center        # subroutine 0
+  hp1_center_pose
   quit
 
 sub hp1_up            # subroutine 1
-  5908 0 servo        # ch0 = 1477us
-  5704 1 servo        # ch1 = 1426us
+  hp1_up_pose
   quit
 
 sub hp1_down          # subroutine 2
-  5688 0 servo        # ch0 = 1422us
-  4644 1 servo        # ch1 = 1161us
+  hp1_down_pose
   quit
 
 sub hp1_left          # subroutine 3
-  6444 0 servo        # ch0 = 1611us
-  5700 1 servo        # ch1 = 1425us
+  hp1_left_pose
   quit
 
 sub hp1_upper_left    # subroutine 4
-  6444 0 servo        # ch0 = 1611us
-  4620 1 servo        # ch1 = 1155us
+  hp1_upper_left_pose
   quit
 
 sub hp1_lower_left    # subroutine 5
-  6444 0 servo        # ch0 = 1611us
-  6956 1 servo        # ch1 = 1739us
+  hp1_lower_left_pose
   quit
 
 sub hp1_right         # subroutine 6
-  5020 0 servo        # ch0 = 1255us
-  5736 1 servo        # ch1 = 1434us
+  hp1_right_pose
   quit
 
 sub hp1_upper_right   # subroutine 7
-  5020 0 servo        # ch0 = 1255us
-  4460 1 servo        # ch1 = 1115us
+  hp1_upper_right_pose
   quit
 
 sub hp1_lower_right   # subroutine 8
-  5020 0 servo        # ch0 = 1255us
-  6916 1 servo        # ch1 = 1729us
+  hp1_lower_right_pose
   quit
 
 # --- HP2 (Rear)  channels 2, 3 ---
 
 sub hp2_center        # subroutine 9
-  6328 2 servo        # ch2 = 1582us
-  5320 3 servo        # ch3 = 1330us
+  hp2_center_pose
   quit
 
 sub hp2_up            # subroutine 10
-  6000 2 servo        # ch2 = 1500us
-  6048 3 servo        # ch3 = 1512us
+  hp2_up_pose
   quit
 
 sub hp2_down          # subroutine 11
-  5864 2 servo        # ch2 = 1466us
-  7092 3 servo        # ch3 = 1773us
+  hp2_down_pose
   quit
 
 sub hp2_left          # subroutine 12
-  6820 2 servo        # ch2 = 1705us
-  6392 3 servo        # ch3 = 1598us
+  hp2_left_pose
   quit
 
 sub hp2_upper_left    # subroutine 13
-  6820 2 servo        # ch2 = 1705us
-  7188 3 servo        # ch3 = 1797us
+  hp2_upper_left_pose
   quit
 
 sub hp2_lower_left    # subroutine 14
-  6820 2 servo        # ch2 = 1705us
-  5556 3 servo        # ch3 = 1389us
+  hp2_lower_left_pose
   quit
 
 sub hp2_right         # subroutine 15
-  5144 2 servo        # ch2 = 1286us
-  5840 3 servo        # ch3 = 1460us
+  hp2_right_pose
   quit
 
 sub hp2_upper_right   # subroutine 16
-  5144 2 servo        # ch2 = 1286us
-  6408 3 servo        # ch3 = 1602us
+  hp2_upper_right_pose
   quit
 
 sub hp2_lower_right   # subroutine 17
-  5140 2 servo        # ch2 = 1285us
-  5132 3 servo        # ch3 = 1283us
+  hp2_lower_right_pose
   quit
 
 # --- HP3 (Top)  channels 4, 5 ---
 
 sub hp3_center        # subroutine 18
-  6028 4 servo        # ch4 = 1507us
-  4832 5 servo        # ch5 = 1208us
+  hp3_center_pose
   quit
 
 sub hp3_up            # subroutine 19
-  6004 4 servo        # ch4 = 1501us
-  5868 5 servo        # ch5 = 1467us
+  hp3_up_pose
   quit
 
 sub hp3_down          # subroutine 20
-  5772 4 servo        # ch4 = 1443us
-  6720 5 servo        # ch5 = 1680us
+  hp3_down_pose
   quit
 
 sub hp3_left          # subroutine 21
-  6496 4 servo        # ch4 = 1624us
-  5872 5 servo        # ch5 = 1468us
+  hp3_left_pose
   quit
 
 sub hp3_upper_left    # subroutine 22
-  6496 4 servo        # ch4 = 1624us
-  6668 5 servo        # ch5 = 1667us
+  hp3_upper_left_pose
   quit
 
 sub hp3_lower_left    # subroutine 23
-  6612 4 servo        # ch4 = 1653us
-  5088 5 servo        # ch5 = 1272us
+  hp3_lower_left_pose
   quit
 
 sub hp3_right         # subroutine 24
-  5068 4 servo        # ch4 = 1267us
-  5872 5 servo        # ch5 = 1468us
+  hp3_right_pose
   quit
 
 sub hp3_upper_right   # subroutine 25
-  5032 4 servo        # ch4 = 1258us
-  7024 5 servo        # ch5 = 1756us
+  hp3_upper_right_pose
   quit
 
 sub hp3_lower_right   # subroutine 26
-  5580 4 servo        # ch4 = 1395us
-  4704 5 servo        # ch5 = 1176us
+  hp3_lower_right_pose
   quit
+
+# --- Custom Maestro subroutines start here ---
+# Trigger from the Arduino with M27, M28, etc.
+# Add custom behavior here. These routines can reuse the shared pose helpers
+# below so you only maintain each position value in one place.
+# This example walks all three HPs clockwise together starting at up.
+
+sub hp_all_clockwise_tour # subroutine 27
+  hp1_up_pose
+  hp2_up_pose
+  hp3_up_pose
+  500 delay
+
+  hp1_upper_right_pose
+  hp2_upper_right_pose
+  hp3_upper_right_pose
+  500 delay
+
+  hp1_right_pose
+  hp2_right_pose
+  hp3_right_pose
+  500 delay
+
+  hp1_lower_right_pose
+  hp2_lower_right_pose
+  hp3_lower_right_pose
+  500 delay
+
+  hp1_down_pose
+  hp2_down_pose
+  hp3_down_pose
+  500 delay
+
+  hp1_lower_left_pose
+  hp2_lower_left_pose
+  hp3_lower_left_pose
+  500 delay
+
+  hp1_left_pose
+  hp2_left_pose
+  hp3_left_pose
+  500 delay
+
+  hp1_upper_left_pose
+  hp2_upper_left_pose
+  hp3_upper_left_pose
+  500 delay
+
+  hp1_up_pose
+  hp2_up_pose
+  hp3_up_pose
+  500 delay
+  quit
+
+# --- Shared pose helpers ---
+# These are intentionally listed last. Update these numeric targets here when
+# calibrating positions; the base wrappers and custom routines both call these
+# helpers so the values stay centralized.
+
+sub hp1_center_pose
+  6000 0 servo        # ch0 = 1500us
+  6000 1 servo        # ch1 = 1500us
+  return
+
+sub hp1_up_pose
+  7000 0 servo        # ch0 = 1750us
+  6000 1 servo        # ch1 = 1500us
+  return
+
+sub hp1_down_pose
+  5000 0 servo        # ch0 = 1250us
+  6000 1 servo        # ch1 = 1500us
+  return
+
+sub hp1_left_pose
+  6000 0 servo        # ch0 = 1500us
+  7000 1 servo        # ch1 = 1750us
+  return
+
+sub hp1_upper_left_pose
+  6500 0 servo        # ch0 = 1625us
+  6500 1 servo        # ch1 = 1625us
+  return
+
+sub hp1_lower_left_pose
+  6500 0 servo        # ch0 = 1625us
+  5500 1 servo        # ch1 = 1375us
+  return
+
+sub hp1_right_pose
+  6000 0 servo        # ch0 = 1500us
+  5000 1 servo        # ch1 = 1250us
+  return
+
+sub hp1_upper_right_pose
+  6500 0 servo        # ch0 = 1625us
+  5500 1 servo        # ch1 = 1375us
+  return
+
+sub hp1_lower_right_pose
+  5500 0 servo        # ch0 = 1375us
+  5500 1 servo        # ch1 = 1375us
+  return
+
+sub hp2_center_pose
+  6000 2 servo        # ch2 = 1500us
+  6000 3 servo        # ch3 = 1500us
+  return
+
+sub hp2_up_pose
+  7000 2 servo        # ch2 = 1750us
+  6000 3 servo        # ch3 = 1500us
+  return
+
+sub hp2_down_pose
+  5000 2 servo        # ch2 = 1250us
+  6000 3 servo        # ch3 = 1500us
+  return
+
+sub hp2_left_pose
+  6000 2 servo        # ch2 = 1500us
+  7000 3 servo        # ch3 = 1750us
+  return
+
+sub hp2_upper_left_pose
+  6500 2 servo        # ch2 = 1625us
+  6500 3 servo        # ch3 = 1625us
+  return
+
+sub hp2_lower_left_pose
+  6500 2 servo        # ch2 = 1625us
+  5500 3 servo        # ch3 = 1375us
+  return
+
+sub hp2_right_pose
+  6000 2 servo        # ch2 = 1500us
+  5000 3 servo        # ch3 = 1250us
+  return
+
+sub hp2_upper_right_pose
+  5144 2 servo        # ch2 = 1286us
+  6408 3 servo        # ch3 = 1602us
+  return
+
+sub hp2_lower_right_pose
+  5500 2 servo        # ch2 = 1375us
+  5500 3 servo        # ch3 = 1375us
+  return
+
+sub hp3_center_pose
+  6000 4 servo        # ch4 = 1500us
+  6000 5 servo        # ch5 = 1500us
+  return
+
+sub hp3_up_pose
+  7000 4 servo        # ch4 = 1750us
+  6000 5 servo        # ch5 = 1500us
+  return
+
+sub hp3_down_pose
+  5000 4 servo        # ch4 = 1250us
+  6000 5 servo        # ch5 = 1500us
+  return
+
+sub hp3_left_pose
+  6000 4 servo        # ch4 = 1500us
+  7000 5 servo        # ch5 = 1750us
+  return
+
+sub hp3_upper_left_pose
+  6500 4 servo        # ch4 = 1625us
+  6500 5 servo        # ch5 = 1625us
+  return
+
+sub hp3_lower_left_pose
+  6500 4 servo        # ch4 = 1625us
+  5500 5 servo        # ch5 = 1375us
+  return
+
+sub hp3_right_pose
+  6000 4 servo        # ch4 = 1500us
+  5000 5 servo        # ch5 = 1250us
+  return
+
+sub hp3_upper_right_pose
+  6500 4 servo        # ch4 = 1625us
+  5500 5 servo        # ch5 = 1375us
+  return
+
+sub hp3_lower_right_pose
+  5500 4 servo        # ch4 = 1375us
+  5500 5 servo        # ch5 = 1375us
+  return

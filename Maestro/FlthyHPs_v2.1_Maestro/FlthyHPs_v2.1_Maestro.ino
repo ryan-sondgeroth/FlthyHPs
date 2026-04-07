@@ -68,7 +68,10 @@
 ///                                                                                                           ///
 ///     Commands and Structure                                                                                ///
 ///                                                                                                           ///
-///     DT##C or DT##CS or DT##R or DT##P                                                                     ///
+///     DT##[C][S][|duration] or S##/M##                                                                        ///
+///                                                                                                           ///
+///     Note: In DT commands, C is the optional LED color value. In standalone                              ///
+///           commands, C is the first character and means "custom Maestro subroutine".                    ///
 ///                                                                                                           ///
 ///     D - the HP designator                                                                                 ///
 ///          F - Front HP                                                                                     ///
@@ -79,10 +82,13 @@
 ///          Y - Front & Top HPs                                                                              ///
 ///          Z - Rear & Top HPs                                                                               ///
 ///          S - Sequences (See Below)                                                                        ///
+///          M - Run a custom Maestro subroutine directly ## is custom Subroutine ID in setttings             ///
+///              stored on Maestro.                                                                           ///
 ///                                                                                                           ///
 ///     T - the Sequence Type is either 0-Led Fuctions and 1-Servo Functions                                  ///
 ///                                                                                                           ///
 ///    ## - the Sequence Value including leading zero if necessary, ie sequence 3 is 03                       ///
+///                                                                                                           ///
 ///                                                                                                           ///
 ///     C - (Optional), the Color integer value from list below:                                              ///
 ///        Basic Color Integer Values                                                                         ///
@@ -131,9 +137,9 @@
 ///     D0992   - Clears LED, Enables Auto LED Sequence,Enables Random Sequences, Enables "Off Color"         ///
 ///                                                                                                           ///
 ///     D101P   - Sends HP to a Preset Position (P = position index 0-8)                                      ///
-///     D104    - Sends HP to a Random Position                                                               ///
-///     D105    - Wags HP Left/Right 5 times                                                                  ///
-///     D106    - Wags HP Up/Down 5 times                                                                     ///
+///     D104    - Sends HP to a Random Position (or keeps twitching for a timed duration)                    ///
+///     D105    - Wags HP Left/Right for the requested duration                                               ///
+///     D106    - Wags HP Up/Down for the requested duration                                                  ///
 ///     D198    - Disables Auto HP Twitch                                                                     ///
 ///     D199    - Enables Auto HP Twitch                                                                      ///
 ///                                                                                                           ///
@@ -151,6 +157,7 @@
 ///                                                                                                           ///
 ///    Runtime values can be added to any command string by appending a pipe (|) followed by a               ///
 ///     numeric value indicating the desired time in seconds you wish the sequence to run.                    ///
+///    Servo commands can also append V = S, M, or F for Slow/Medium/Fast movement speed.                    ///
 ///                                                                                                           ///
 ///       ie.  A007|25 would run the Rainbow Sequence on all 3 HPs for 25 seconds then clear each             ///
 ///            one, returning to the system's last known auto twitch mode.                                    ///
@@ -218,12 +225,10 @@ namespace Config {
    constexpr unsigned long STATUS_LED_DURATION = 200;
    constexpr unsigned long CYCLE_INTERVAL = 75;
    constexpr unsigned long RAINBOW_INTERVAL = 10;
-   constexpr unsigned long WAG_INTERVAL = 400;
    constexpr unsigned long COLOR_PROJECTOR_MIN = 50;
    constexpr unsigned long COLOR_PROJECTOR_MAX = 150;
 
    // Animation Limits
-   constexpr uint8_t WAG_CYCLES = 10;
    constexpr uint8_t SHORT_CIRCUIT_MAX_LOOPS = 20;
 
    // Command Buffer
@@ -236,17 +241,24 @@ namespace Config {
    //   0 = unlimited (instant jump - not recommended).
    // Acceleration units: (quarter-us/10ms) per 80ms. Lower = gentler ramp.
    //   0 = unlimited (instant speed change).
-   //   Range 1-255. ~5 gives a smooth but not sluggish ramp.
+   //   Range 1-255. We map acceleration from speed so each profile ramps
+   //   for about 0.8s (accel ~= speed / 10).
    constexpr uint16_t MAESTRO_MOVE_SPEED = 30;    // Default speed for all channels
-   constexpr uint16_t MAESTRO_ACCELERATION = 5;   // Smooth acceleration ramp
+   constexpr uint16_t SERVO_SPEED_SLOW = 100;
+   constexpr uint16_t SERVO_SPEED_MEDIUM = 200;
+   constexpr uint16_t SERVO_SPEED_FAST = 400;
 
    // Move completion timing
    // Since we can't use getMovingState() reliably on the 6-channel Maestro,
    // we estimate move duration from the speed setting and pulse range.
    // This is used to know when an HP has "arrived" before triggering follow-on actions.
    // Formula: (max_range_quarter_us / speed) * 10ms + margin
-   // At speed=30, 600us range = 2400 quarter-us / 30 * 10ms = 800ms + 200ms margin
-   constexpr unsigned long MOVE_DURATION_MS = 1000;  // Estimated max move time in ms
+   // At speed=30, 600us range = 2400 quarter-us / 30 * 10ms = 800ms + 100ms margin
+   constexpr unsigned long MOVE_RANGE_QUARTER_US = 2400;
+   constexpr unsigned long MOVE_DURATION_MARGIN_MS = 100;
+   constexpr unsigned long WAG_SETTLE_SLOW_MS = 1500;
+   constexpr unsigned long WAG_SETTLE_MEDIUM_MS = 1000;
+   constexpr unsigned long WAG_SETTLE_FAST_MS = 700;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +375,7 @@ const uint16_t LED_TWITCH_INTERVAL[Config::HP_COUNT][2] PROGMEM = {{30,90}, {30,
 const uint16_t HP_TWITCH_INTERVAL[Config::HP_COUNT][2] PROGMEM = {{45,120}, {60,180}, {60,180}};
 const uint16_t LED_TWITCH_RUN_INTERVAL[Config::HP_COUNT][2] PROGMEM = {{5,25}, {5,25}, {5,25}};
 const uint16_t SERVO_SPEED[2] PROGMEM = {150, 400};
+constexpr int16_t DEFAULT_WAG_DURATION = 4;  // seconds
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///*****                      Default Color Settings                       *****///
@@ -468,6 +481,8 @@ enum class CommandError : uint8_t {
    INVALID_TYPE,
    INVALID_FUNCTION,
    INVALID_COLOR,
+   INVALID_SPEED,
+   INVALID_SUBROUTINE,
    OUT_OF_BOUNDS,
    BUFFER_OVERFLOW
 };
@@ -483,9 +498,12 @@ struct Command {
    int8_t option1 = -1;
    int8_t option2 = -1;
    int16_t duration = -1;
+   char speed = '\0';
+   uint16_t customSubroutine = 0;
+   bool hasCustomSubroutine = false;
 
    bool isValid() const {
-       static const char VALID_DEVICES[] = "FRTAXYZS";
+       static const char VALID_DEVICES[] = "FRTAXYZSM";
        return strchr(VALID_DEVICES, device) != nullptr;
    }
 };
@@ -501,6 +519,7 @@ struct HpCommand {
    HpFunction function = HpFunction::DO_NOTHING;
    uint8_t option1 = 0;
    int16_t halt = -1;
+   uint16_t speed = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -514,15 +533,19 @@ struct HpCommand {
 struct ServoMoveTimer {
    bool moving = false;
    unsigned long startTime = 0;
+   unsigned long durationMs = 0;
 
-   void start() {
+   void start(uint16_t speed) {
        moving = true;
        startTime = millis();
+       if (speed == 0) speed = Config::MAESTRO_MOVE_SPEED;
+       durationMs = ((Config::MOVE_RANGE_QUARTER_US * 10UL) + speed - 1UL) / speed;
+       durationMs += Config::MOVE_DURATION_MARGIN_MS;
    }
 
    bool isComplete() {
        if (!moving) return true;
-       if (millis() - startTime >= Config::MOVE_DURATION_MS) {
+       if (millis() - startTime >= durationMs) {
            moving = false;
            return true;
        }
@@ -621,8 +644,6 @@ SimpleTimer ledTimers[Config::HP_COUNT];
 SimpleTimer hpTwitchTimers[Config::HP_COUNT];
 SimpleTimer ledTwitchTimers[Config::HP_COUNT];
 SimpleTimer statusLedTimer(Config::STATUS_LED_DURATION);
-SimpleTimer wagTimers[Config::HP_COUNT];
-
 // Servo Move Timers (one per HP - tracks estimated Maestro move completion)
 ServoMoveTimer servoMoveTimers[Config::HP_COUNT];
 
@@ -630,7 +651,8 @@ ServoMoveTimer servoMoveTimers[Config::HP_COUNT];
 uint8_t animationFrame[Config::HP_COUNT] = {0, 0, 0};
 uint8_t shortCircuitLoop[Config::HP_COUNT] = {0, 0, 0};
 bool shortCircuitFlag[Config::HP_COUNT] = {false, false, false};
-int8_t wagCount[Config::HP_COUNT] = {-1, -1, -1};
+bool wagPhase[Config::HP_COUNT] = {false, false, false};
+unsigned long wagNextToggleAt[Config::HP_COUNT] = {0, 0, 0};
 unsigned long ledHaltTime[Config::HP_COUNT];
 unsigned long hpHaltTime[Config::HP_COUNT];
 unsigned long twitchLEDRunTime[Config::HP_COUNT];
@@ -663,6 +685,10 @@ CommandError validateCommand(const Command& cmd);
 void processCommand(const Command& cmd);
 void executeCommand(uint8_t hp, const Command& cmd);
 const __FlashStringHelper* errorToString(CommandError err);
+bool isValidServoSpeed(char speed);
+uint16_t servoSpeedFromCommand(char speed, uint16_t defaultSpeed);
+uint8_t servoAccelerationForSpeed(uint16_t speed);
+unsigned long wagSettleDurationMs(uint16_t speed);
 
 // LED Functions
 void ledOff(uint8_t hp);
@@ -678,8 +704,8 @@ uint32_t dimColorValue(uint8_t color, uint8_t brightness);
 
 // HP Servo Functions
 void positionHP(uint8_t hp, uint8_t pos, uint16_t speed);
-void twitchHP(uint8_t hp);
-void wagHP(uint8_t hp, uint8_t type);
+void twitchHP(uint8_t hp, uint16_t speedOverride);
+void wagHP(uint8_t hp, uint8_t type, uint16_t speed);
 
 // System Functions
 void resetAnimation(uint8_t hp);
@@ -692,6 +718,7 @@ void resetHPTwitch(uint8_t hp);
 void initializeStartupState();
 bool isLedIdle(uint8_t hp);
 bool isHpIdle(uint8_t hp);
+bool isWagFunction(HpFunction function);
 
 
 #ifdef DEBUG
@@ -727,7 +754,7 @@ void setup() {
    // Apply speed/accel limits to all Maestro channels via PololuMaestro library
    for (uint8_t ch = 0; ch < Config::HP_COUNT * Config::SERVOS_PER_HP; ch++) {
        maestro.setSpeed(ch, Config::MAESTRO_MOVE_SPEED);
-       maestro.setAcceleration(ch, Config::MAESTRO_ACCELERATION);
+       maestro.setAcceleration(ch, servoAccelerationForSpeed(Config::MAESTRO_MOVE_SPEED));
    }
 
    // Initialize LEDs and Timers
@@ -744,7 +771,6 @@ void setup() {
        ledTwitchTimers[i].setInterval(random(readLedTwitchInterval(i, 0), readLedTwitchInterval(i, 1)) * 1000UL);
        hpTwitchTimers[i].setInterval(random(readHpTwitchInterval(i, 0), readHpTwitchInterval(i, 1)) * 1000UL);
 
-       wagTimers[i].setInterval(Config::WAG_INTERVAL);
    }
 
    initializeStartupState();
@@ -890,24 +916,32 @@ void loop() {
    // Process HP commands
    for (uint8_t i = 0; i < Config::HP_COUNT; i++) {
        if (hpCommands[i].halt > 0 && (millis() - hpHaltTime[i] >= hpCommands[i].halt * 1000UL)) {
+           if (isWagFunction(hpCommands[i].function)) {
+               positionHP(i, Config::HP_CENTER_POSITION, Config::MAESTRO_MOVE_SPEED);
+           }
            flushCommandArray(i, 1);
-           wagCount[i] = -1;
        }
 
        switch (hpCommands[i].function) {
            case HpFunction::GOTO_PRESET:
-               positionHP(i, hpCommands[i].option1, readServoSpeed(0));
+               positionHP(i, hpCommands[i].option1, hpCommands[i].speed);
                flushCommandArray(i, 1);
                break;
            case HpFunction::RANDOM_POS:
-               twitchHP(i);
-               flushCommandArray(i, 1);
+               if (hpCommands[i].halt > 0) {
+                   if (servoMoveTimers[i].isComplete()) {
+                       twitchHP(i, hpCommands[i].speed);
+                   }
+               } else {
+                   twitchHP(i, hpCommands[i].speed);
+                   flushCommandArray(i, 1);
+               }
                break;
            case HpFunction::WAG_LEFT_RIGHT:
-               wagHP(i, 1);
+               wagHP(i, 1, hpCommands[i].speed);
                break;
            case HpFunction::WAG_UP_DOWN:
-               wagHP(i, 2);
+               wagHP(i, 2, hpCommands[i].speed);
                break;
            case HpFunction::AUTO_TWITCH_OFF:
                enableTwitchHP[i] = false;
@@ -923,7 +957,7 @@ void loop() {
 
        // Auto HP twitch
        if (enableTwitchHP[i] && hpTwitchTimers[i].check() && isHpIdle(i)) {
-           twitchHP(i);
+           twitchHP(i, 0);
            resetHPTwitch(i);
 
            #ifdef DEBUG
@@ -952,8 +986,16 @@ Command parseCommand(const char* cmdStr) {
 
    char* pipePos = strchr(buffer, '|');
    if (pipePos) {
+       char* suffix = pipePos + 1;
+       size_t suffixLen = strlen(suffix);
+       if (suffixLen > 0 && isalpha((unsigned char)suffix[suffixLen - 1])) {
+           cmd.speed = (char)toupper((unsigned char)suffix[suffixLen - 1]);
+           suffix[suffixLen - 1] = '\0';
+       }
        *pipePos = '\0';
-       cmd.duration = atoi(pipePos + 1);
+       if (*suffix != '\0') {
+           cmd.duration = atoi(suffix);
+       }
    }
 
    if (strcasecmp(buffer, "help") == 0 || strcmp(buffer, "?") == 0) {
@@ -963,19 +1005,48 @@ Command parseCommand(const char* cmdStr) {
 
    cmd.device = toupper(buffer[0]);
 
+   if (cmd.device == 'M') {
+       const char* subroutineStr = buffer + 1;
+       if (*subroutineStr == '\0') {
+           return cmd;
+       }
+
+       for (const char* p = subroutineStr; *p != '\0'; ++p) {
+           if (!isdigit((unsigned char)*p)) {
+               return cmd;
+           }
+       }
+
+       unsigned long subroutine = strtoul(subroutineStr, nullptr, 10);
+       if (subroutine > 255UL) {
+           return cmd;
+       }
+
+       cmd.customSubroutine = (uint16_t)subroutine;
+       cmd.hasCustomSubroutine = true;
+       return cmd;
+   }
+
    if (strlen(buffer) > 1) {
        cmd.type = buffer[1] - '0';
    }
 
-   if (strlen(buffer) > 3) {
+   size_t commandLen = strlen(buffer);
+   if (cmd.type == 1 && commandLen > 0 && isalpha((unsigned char)buffer[commandLen - 1])) {
+       cmd.speed = (char)toupper((unsigned char)buffer[commandLen - 1]);
+       buffer[commandLen - 1] = '\0';
+       commandLen--;
+   }
+
+   if (commandLen > 3) {
        cmd.function = (buffer[2] - '0') * 10 + (buffer[3] - '0');
    }
 
-   if (strlen(buffer) > 4) {
+   if (commandLen > 4) {
        cmd.option1 = buffer[4] - '0';
    }
 
-   if (strlen(buffer) > 5) {
+   if (commandLen > 5) {
        cmd.option2 = buffer[5] - '0';
    }
 
@@ -987,8 +1058,16 @@ CommandError validateCommand(const Command& cmd) {
        return CommandError::INVALID_DEVICE;
    }
 
+   if (cmd.device == 'M') {
+       return cmd.hasCustomSubroutine ? CommandError::OK : CommandError::INVALID_SUBROUTINE;
+   }
+
    if (cmd.device != 'S' && cmd.device != 'H' && cmd.type > 1) {
        return CommandError::INVALID_TYPE;
+   }
+
+   if (cmd.speed != '\0' && (cmd.type != 1 || !isValidServoSpeed(cmd.speed))) {
+       return CommandError::INVALID_SPEED;
    }
 
    if (cmd.option1 > 9 || cmd.option2 > 9) {
@@ -1002,17 +1081,52 @@ const __FlashStringHelper* errorToString(CommandError err) {
    switch(err) {
        case CommandError::OK:               return F("No error");
        case CommandError::INVALID_FORMAT:   return F("Invalid command format");
-       case CommandError::INVALID_DEVICE:   return F("Invalid device (use F,R,T,A,X,Y,Z,S)");
+       case CommandError::INVALID_DEVICE:   return F("Invalid device (use F,R,T,A,X,Y,Z,S,M)");
        case CommandError::INVALID_TYPE:     return F("Invalid type (use 0 for LED, 1 for Servo)");
        case CommandError::INVALID_FUNCTION: return F("Invalid function number");
        case CommandError::INVALID_COLOR:    return F("Invalid color (use 0-9)");
+       case CommandError::INVALID_SPEED:    return F("Invalid servo speed (use S, M, or F)");
+       case CommandError::INVALID_SUBROUTINE: return F("Invalid custom subroutine (use M0-M255)");
        case CommandError::OUT_OF_BOUNDS:    return F("Value out of bounds");
        case CommandError::BUFFER_OVERFLOW:  return F("Command too long");
        default:                             return F("Unknown error");
    }
 }
 
+bool isValidServoSpeed(char speed) {
+   return speed == 'S' || speed == 'M' || speed == 'F';
+}
+
+uint16_t servoSpeedFromCommand(char speed, uint16_t defaultSpeed) {
+   switch (speed) {
+       case 'S': return Config::SERVO_SPEED_SLOW;
+       case 'M': return Config::SERVO_SPEED_MEDIUM;
+       case 'F': return Config::SERVO_SPEED_FAST;
+       default:  return defaultSpeed;
+   }
+}
+
+uint8_t servoAccelerationForSpeed(uint16_t speed) {
+   if (speed == 0) speed = Config::MAESTRO_MOVE_SPEED;
+
+   uint16_t accel = (speed + 5U) / 10U;  // target roughly 0.8s ramp time
+   if (accel < 1U) accel = 1U;
+   if (accel > 255U) accel = 255U;
+   return (uint8_t)accel;
+}
+
+unsigned long wagSettleDurationMs(uint16_t speed) {
+   if (speed >= Config::SERVO_SPEED_FAST) return Config::WAG_SETTLE_FAST_MS;
+   if (speed >= Config::SERVO_SPEED_MEDIUM) return Config::WAG_SETTLE_MEDIUM_MS;
+   return Config::WAG_SETTLE_SLOW_MS;
+}
+
 void processCommand(const Command& cmd) {
+   if (cmd.device == 'M') {
+       maestro.restartScript((uint8_t)cmd.customSubroutine);
+       return;
+   }
+
    if (cmd.device == 'S') {
        switch ((Sequence)cmd.function) {
            case Sequence::LEIA_MODE:
@@ -1104,15 +1218,49 @@ void executeCommand(uint8_t hp, const Command& cmd) {
    else if (cmd.type == 1) {
        flushCommandArray(hp, 1);
 
-       hpCommands[hp].function = (HpFunction)cmd.function;
+       HpFunction hpFunction = (HpFunction)cmd.function;
+       hpCommands[hp].function = hpFunction;
        hpCommands[hp].option1 = (cmd.option1 >= 0) ? cmd.option1 : 1;
+       hpCommands[hp].speed = 0;
+
+       switch (hpFunction) {
+           case HpFunction::GOTO_PRESET:
+               hpCommands[hp].speed = servoSpeedFromCommand(cmd.speed, readServoSpeed(0));
+               break;
+           case HpFunction::RANDOM_POS:
+               hpCommands[hp].speed = servoSpeedFromCommand(cmd.speed, 0);
+               break;
+           case HpFunction::WAG_LEFT_RIGHT:
+           case HpFunction::WAG_UP_DOWN:
+               hpCommands[hp].speed = servoSpeedFromCommand(cmd.speed, Config::SERVO_SPEED_FAST);
+               break;
+           default:
+               break;
+       }
 
        if (cmd.duration > 0) {
            hpCommands[hp].halt = cmd.duration;
            hpHaltTime[hp] = millis();
        }
 
-       wagCount[hp] = -1;
+       if (hpFunction == HpFunction::RANDOM_POS) {
+           twitchHP(hp, hpCommands[hp].speed);
+           if (cmd.duration <= 0) {
+               flushCommandArray(hp, 1);
+           }
+       }
+
+       if (hpFunction == HpFunction::WAG_LEFT_RIGHT ||
+           hpFunction == HpFunction::WAG_UP_DOWN) {
+           hpCommands[hp].halt = (cmd.duration > 0) ? cmd.duration : DEFAULT_WAG_DURATION;
+           hpHaltTime[hp] = millis();
+           wagPhase[hp] = true;
+           wagNextToggleAt[hp] = millis() + wagSettleDurationMs(hpCommands[hp].speed);
+
+           // Start wagging immediately instead of idling at the current position
+           // until the first timer interval expires.
+           positionHP(hp, (hpFunction == HpFunction::WAG_LEFT_RIGHT) ? 3 : 1, hpCommands[hp].speed);
+        }
    }
 }
 
@@ -1250,47 +1398,45 @@ void positionHP(uint8_t hp, uint8_t pos, uint16_t speed) {
    // Apply speed to both channels for this HP before triggering the subroutine.
    // Speed of 0 means use the default from Config.
    uint16_t maestroSpeed = (speed > 0) ? speed : Config::MAESTRO_MOVE_SPEED;
+   uint8_t maestroAcceleration = servoAccelerationForSpeed(maestroSpeed);
    maestro.setSpeed(readHpPin(hp, 0), maestroSpeed);
    maestro.setSpeed(readHpPin(hp, 1), maestroSpeed);
+   maestro.setAcceleration(readHpPin(hp, 0), maestroAcceleration);
+   maestro.setAcceleration(readHpPin(hp, 1), maestroAcceleration);
 
    // Subroutine index = (hp * HP_POSITIONS) + position.
    // Positions are defined in FlthyHPs_Maestro_Script.mscr loaded onto the Maestro.
    uint8_t subroutine = (hp * Config::HP_POSITIONS) + pos;
    maestro.restartScript(subroutine);
 
-   servoMoveTimers[hp].start();
+   servoMoveTimers[hp].start(maestroSpeed);
 }
 
-void twitchHP(uint8_t hp) {
+void twitchHP(uint8_t hp, uint16_t speedOverride) {
    // Pick a random speed within the configured range, mapped to Maestro units.
    // Lower speedMs = faster = higher Maestro speed value.
    // Maestro speed 30 ≈ 800ms, speed 80 ≈ 300ms for 600us range.
-   uint16_t speedMs = random(readServoSpeed(0), readServoSpeed(1));
-   uint16_t maestroSpeed = map(speedMs, readServoSpeed(0), readServoSpeed(1), 80, 30);
+   uint16_t maestroSpeed = speedOverride;
+   if (maestroSpeed == 0) {
+       uint16_t speedMs = random(readServoSpeed(0), readServoSpeed(1));
+       maestroSpeed = map(speedMs, readServoSpeed(0), readServoSpeed(1), 80, 30);
+   }
 
    // Pick a random safe position — all positions are defined in the Maestro script.
    positionHP(hp, random(0, Config::HP_POSITIONS), maestroSpeed);
 }
 
-void wagHP(uint8_t hp, uint8_t type) {
-   if (wagCount[hp] < 0) {
-       wagCount[hp] = 0;
-       wagTimers[hp].reset();
-   }
+void wagHP(uint8_t hp, uint8_t type, uint16_t speed) {
+   if (millis() >= wagNextToggleAt[hp]) {
+       wagPhase[hp] = !wagPhase[hp];
 
-   if (wagTimers[hp].check()) {
-       wagCount[hp]++;
-
-       if (wagCount[hp] % 2) {
-           positionHP(hp, (type == 1) ? 3 : 1, 250);  // left or up
+       if (wagPhase[hp]) {
+           positionHP(hp, (type == 1) ? 3 : 1, speed);  // left or up
        } else {
-           positionHP(hp, (type == 1) ? 6 : 2, 250);  // right or down
+           positionHP(hp, (type == 1) ? 6 : 2, speed);  // right or down
        }
 
-       if (wagCount[hp] >= Config::WAG_CYCLES) {
-           flushCommandArray(hp, 1);
-           wagCount[hp] = -1;
-       }
+       wagNextToggleAt[hp] = millis() + wagSettleDurationMs(speed);
    }
 }
 
@@ -1349,6 +1495,11 @@ bool isHpIdle(uint8_t hp) {
    return hpCommands[hp].function == HpFunction::DO_NOTHING;
 }
 
+bool isWagFunction(HpFunction function) {
+   return function == HpFunction::WAG_LEFT_RIGHT ||
+          function == HpFunction::WAG_UP_DOWN;
+}
+
 void flushCommandArray(uint8_t hp, uint8_t type) {
    if (type == 0) {
        if (readOffColor(hp) >= 0 && !offColorOverride[hp]) {
@@ -1364,6 +1515,9 @@ void flushCommandArray(uint8_t hp, uint8_t type) {
        hpCommands[hp].function = HpFunction::DO_NOTHING;
        hpCommands[hp].option1 = 0;
        hpCommands[hp].halt = -1;
+       hpCommands[hp].speed = 0;
+       wagPhase[hp] = false;
+       wagNextToggleAt[hp] = 0;
        if (enableTwitchHP[hp]) {
            resetHPTwitch(hp);
        }
@@ -1388,13 +1542,15 @@ void statusLedOn() {
 
 void printHelp() {
    Serial.println(F("\n=== FlthyHPs v2.1 Maestro Edition ==="));
-   Serial.println(F("Format: DT##[C][S][|duration]"));
+   Serial.println(F("Format: DT##[options][|duration][S|M|F] or M##"));
    Serial.println(F("D=Device, T=Type, ##=Function"));
+   Serial.println(F("In DT commands, C is the LED color option; at the start, M runs a Maestro subroutine."));
    Serial.println(F("\nDEVICES (D):"));
    Serial.println(F("  F,R,T = Front,Rear,Top HP"));
    Serial.println(F("  A = All HPs"));
    Serial.println(F("  X = Front+Rear, Y = Front+Top"));
    Serial.println(F("  Z = Rear+Top, S = Sequence"));
+   Serial.println(F("  M = Custom Maestro subroutine"));
    Serial.println(F("\nTYPE (T): 0=LED, 1=Servo"));
    Serial.println(F("\nLED FUNCTIONS (T=0):"));
    Serial.println(F("  01 = Leia (blue hologram)"));
@@ -1409,15 +1565,20 @@ void printHelp() {
    Serial.println(F("  01 = Go to position"));
    Serial.println(F("  02/03 = RC control"));
    Serial.println(F("  04 = Random position"));
-   Serial.println(F("  05/06 = Wag"));
+   Serial.println(F("  05/06 = Wag for duration"));
    Serial.println(F("  98/99 = Auto twitch off/on"));
    Serial.println(F("\nOPTIONS:"));
    Serial.println(F("  C = Color (1-9, 0=random)"));
    Serial.println(F("  S = Speed (0-9 for dim pulse)"));
    Serial.println(F("  |duration = Run time in seconds"));
+   Serial.println(F("  Servo speed suffix: S=Slow, M=Medium, F=Fast"));
    Serial.println(F("\nEXAMPLES:"));
    Serial.println(F("  F0055    -> Front LED solid blue"));
    Serial.println(F("  A104     -> All servos random"));
+   Serial.println(F("  A105|20S -> Wag left/right for 20s, slow"));
+   Serial.println(F("  A106|20M -> Wag up/down for 20s, medium"));
+   Serial.println(F("  T104|12F -> Random positions for 12s, fast"));
+   Serial.println(F("  M27      -> Run custom Maestro subroutine 27"));
    Serial.println(F("  T006|20  -> Top rainbow for 20s"));
    Serial.println(F("  S5       -> Enable all auto"));
    Serial.println(F("=====================================\n"));
