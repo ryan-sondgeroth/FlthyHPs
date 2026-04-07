@@ -10,17 +10,17 @@
   <Channels ServosAvailable="6" ServoPeriod="156">
     <!--Period = 19.968 ms-->
     <!--Channel 0-->
-    <Channel name="" mode="Servo" min="4800" max="7232" homemode="Goto" home="6016" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
     <!--Channel 1-->
-    <Channel name="" mode="Servo" min="4800" max="7232" homemode="Goto" home="6016" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
     <!--Channel 2-->
-    <Channel name="" mode="Servo" min="4800" max="7232" homemode="Goto" home="6016" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
     <!--Channel 3-->
-    <Channel name="" mode="Servo" min="4800" max="7232" homemode="Goto" home="6016" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
     <!--Channel 4-->
-    <Channel name="" mode="Servo" min="4800" max="7232" homemode="Goto" home="6016" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
     <!--Channel 5-->
-    <Channel name="" mode="Servo" min="4736" max="7232" homemode="Off" home="4736" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <Channel name="" mode="Servo" min="4800" max="7200" homemode="Goto" home="6000" speed="0" acceleration="0" neutral="6000" range="2400" />
   </Channels>
   <Sequences />
   <Script ScriptDone="true">
@@ -57,142 +57,142 @@
 # --- HP1 (Front)  channels 0, 1 ---
 
 sub hp1_center        # subroutine 0
-  5508 0 servo        # ch0 = 1377us
-  6824 1 servo        # ch1 = 1706us
-  return
+  6000 0 servo        # ch0 = 1500us
+  6000 1 servo        # ch1 = 1500us
+  quit
 
 sub hp1_up            # subroutine 1
-  5908 0 servo        # ch0 = 1477us
-  5704 1 servo        # ch1 = 1426us
-  return
+  7000 0 servo        # ch0 = 1750us
+  6000 1 servo        # ch1 = 1500us
+  quit
 
 sub hp1_down          # subroutine 2
-  5688 0 servo        # ch0 = 1422us
-  4644 1 servo        # ch1 = 1161us
-  return
+  5000 0 servo        # ch0 = 1250us
+  6000 1 servo        # ch1 = 1500us
+  quit
 
 sub hp1_left          # subroutine 3
-  6444 0 servo        # ch0 = 1611us
-  5700 1 servo        # ch1 = 1425us
-  return
+  6000 0 servo        # ch0 = 1500us
+  7000 1 servo        # ch1 = 1750us
+  quit
 
 sub hp1_upper_left    # subroutine 4
-  6444 0 servo        # ch0 = 1611us
-  4620 1 servo        # ch1 = 1155us
-  return
+  6500 0 servo        # ch0 = 1625us
+  6500 1 servo        # ch1 = 1625us
+  quit
 
 sub hp1_lower_left    # subroutine 5
-  6444 0 servo        # ch0 = 1611us
-  6956 1 servo        # ch1 = 1739us
-  return
+  6500 0 servo        # ch0 = 1625us
+  5500 1 servo        # ch1 = 1375us
+  quit
 
 sub hp1_right         # subroutine 6
-  5020 0 servo        # ch0 = 1255us
-  5736 1 servo        # ch1 = 1434us
-  return
+  6000 0 servo        # ch0 = 1500us
+  5000 1 servo        # ch1 = 1250us
+  quit
 
 sub hp1_upper_right   # subroutine 7
-  5020 0 servo        # ch0 = 1255us
-  4460 1 servo        # ch1 = 1115us
-  return
+  6500 0 servo        # ch0 = 1625us
+  5500 1 servo        # ch1 = 1375us
+  quit
 
 sub hp1_lower_right   # subroutine 8
-  5020 0 servo        # ch0 = 1255us
-  6916 1 servo        # ch1 = 1729us
-  return
+  5500 0 servo        # ch0 = 1375us
+  5500 1 servo        # ch1 = 1375us
+  quit
 
 # --- HP2 (Rear)  channels 2, 3 ---
 
 sub hp2_center        # subroutine 9
-  6328 2 servo        # ch2 = 1582us
-  5320 3 servo        # ch3 = 1330us
-  return
+  6000 2 servo        # ch2 = 1500us
+  6000 3 servo        # ch3 = 1500us
+  quit
 
 sub hp2_up            # subroutine 10
-  6000 2 servo        # ch2 = 1500us
-  6048 3 servo        # ch3 = 1512us
-  return
+  7000 2 servo        # ch2 = 1750us
+  6000 3 servo        # ch3 = 1500us
+  quit
 
 sub hp2_down          # subroutine 11
-  5864 2 servo        # ch2 = 1466us
-  7092 3 servo        # ch3 = 1773us
-  return
+  5000 2 servo        # ch2 = 1250us
+  6000 3 servo        # ch3 = 1500us
+  quit
 
 sub hp2_left          # subroutine 12
-  6820 2 servo        # ch2 = 1705us
-  6392 3 servo        # ch3 = 1598us
-  return
+  6000 2 servo        # ch2 = 1500us
+  7000 3 servo        # ch3 = 1750us
+  quit
 
 sub hp2_upper_left    # subroutine 13
-  6820 2 servo        # ch2 = 1705us
-  7188 3 servo        # ch3 = 1797us
-  return
+  6500 2 servo        # ch2 = 1625us
+  6500 3 servo        # ch3 = 1625us
+  quit
 
 sub hp2_lower_left    # subroutine 14
-  6820 2 servo        # ch2 = 1705us
-  5556 3 servo        # ch3 = 1389us
-  return
+  6500 2 servo        # ch2 = 1625us
+  5500 3 servo        # ch3 = 1375us
+  quit
 
 sub hp2_right         # subroutine 15
-  5144 2 servo        # ch2 = 1286us
-  5840 3 servo        # ch3 = 1460us
-  return
+  6000 2 servo        # ch2 = 1500us
+  5000 3 servo        # ch3 = 1250us
+  quit
 
 sub hp2_upper_right   # subroutine 16
   5144 2 servo        # ch2 = 1286us
   6408 3 servo        # ch3 = 1602us
-  return
+  quit
 
 sub hp2_lower_right   # subroutine 17
-  5140 2 servo        # ch2 = 1285us
-  5132 3 servo        # ch3 = 1283us
-  return
+  5500 2 servo        # ch2 = 1375us
+  5500 3 servo        # ch3 = 1375us
+  quit
 
 # --- HP3 (Top)  channels 4, 5 ---
 
 sub hp3_center        # subroutine 18
-  6028 4 servo        # ch4 = 1507us
-  4832 5 servo        # ch5 = 1208us
-  return
+  6000 4 servo        # ch0 = 1500us
+  6000 5 servo        # ch1 = 1500us
+  quit
 
 sub hp3_up            # subroutine 19
-  6004 4 servo        # ch4 = 1501us
-  5868 5 servo        # ch5 = 1467us
-  return
+  7000 4 servo        # ch4 = 1750us
+  6000 5 servo        # ch5 = 1500us
+  quit
 
 sub hp3_down          # subroutine 20
-  5772 4 servo        # ch4 = 1443us
-  6720 5 servo        # ch5 = 1680us
-  return
+  5000 4 servo        # ch4 = 1250us
+  6000 5 servo        # ch5 = 1500us
+  quit
 
 sub hp3_left          # subroutine 21
-  6496 4 servo        # ch4 = 1624us
-  5872 5 servo        # ch5 = 1468us
-  return
+  6000 4 servo        # ch4 = 1500us
+  7000 5 servo        # ch5 = 1750us
+  quit
 
 sub hp3_upper_left    # subroutine 22
-  6496 4 servo        # ch4 = 1624us
-  6668 5 servo        # ch5 = 1667us
-  return
+  6500 4 servo        # ch4 = 1625us
+  6500 5 servo        # ch5 = 1625us
+  quit
 
 sub hp3_lower_left    # subroutine 23
-  6612 4 servo        # ch4 = 1653us
-  5088 5 servo        # ch5 = 1272us
-  return
+  6500 4 servo        # ch4 = 1625us
+  5500 5 servo        # ch5 = 1375us
+  quit
 
 sub hp3_right         # subroutine 24
-  5068 4 servo        # ch4 = 1267us
-  5872 5 servo        # ch5 = 1468us
-  return
+  6000 4 servo        # ch4 = 1500us
+  5000 5 servo        # ch5 = 1250us
+  quit
 
 sub hp3_upper_right   # subroutine 25
-  5032 4 servo        # ch4 = 1258us
-  7024 5 servo        # ch5 = 1756us
-  return
+  6500 4 servo        # ch4 = 1625us
+  5500 5 servo        # ch5 = 1375us
+  quit
 
 sub hp3_lower_right   # subroutine 26
-  5580 4 servo        # ch4 = 1395us
-  4704 5 servo        # ch5 = 1176us
-  return
+  5500 4 servo        # ch4 = 1375us
+  5500 5 servo        # ch5 = 1375us
+  quit
   </Script>
 </UscSettings>

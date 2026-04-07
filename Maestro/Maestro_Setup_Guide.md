@@ -128,10 +128,12 @@ Example — if you recorded channel 0 = 1480 µs and channel 1 = 1390 µs for hp
 sub hp1_up            # subroutine 1
   5920 0 servo        # ch0 = 1480us  (1480 x 4 = 5920)
   5560 1 servo        # ch1 = 1390us  (1390 x 4 = 5560)
-  return
+  quit
 ```
 
 The comment showing the µs value is just for your reference — update it too so it stays accurate.
+
+Important: these position subroutines are launched from the Arduino sketch with Maestro `restartScript(subroutine)`, so each one must end with `quit`. Using `return` here causes a subroutine call stack overflow/underflow error on the Maestro.
 
 ### Subroutine reference
 
@@ -169,32 +171,17 @@ The comment showing the µs value is just for your reference — update it too s
 
 ## Phase 4 — Load the Script onto the Maestro
 
-If the Script tab is awkward or read-only on your Windows machine, use **UscCmd** instead. This preserves the channel settings you already calibrated.
+1. In Maestro Control Center, go to the **Script** tab
+2. Paste the contents of `FlthyHPs_Maestro_Script.mscr` into the script editor
+3. If you want the script to start automatically after power-up, enable **Run script on startup**
+4. Click **Apply Settings**
+5. Use **File > Save settings file...** to save a portable backup after the script is loaded
 
-1. Connect the Maestro over USB
-2. Open a Windows Command Prompt
-3. Export the current Maestro settings:
-
-```bat
-UscCmd --getconf "%USERPROFILE%\Desktop\FlthyHPs_Maestro_Settings.txt"
-```
-
-4. Open `FlthyHPs_Maestro_Settings.txt` in a text editor
-5. Find the existing `<Script ...>` section and replace only the text between the opening `<Script ...>` tag and the closing `</Script>` tag with the contents of `FlthyHPs_Maestro_Script.mscr`
-6. Save the edited settings file
-7. Load the updated settings back onto the Maestro:
-
-```bat
-UscCmd --configure "%USERPROFILE%\Desktop\FlthyHPs_Maestro_Settings.txt"
-```
-
-8. In Maestro Control Center, verify **Run script on startup** is enabled if you want the script to start automatically after power-up
-
-Notes:
-- `UscCmd` is installed with the Pololu Maestro Windows software
-- This method copies the script into your current Maestro configuration without forcing you to paste into the Script tab
-- Keep the exported settings file as a backup; it includes your script source and channel settings
-- Do not replace the opening `<Script ...>` tag itself; exported files can include required attributes such as `ScriptDone`
+Important:
+- Do not try to build a new script-bearing settings file by hand from `UscCmd --getconf` output
+- Pololu stores the script source code on the PC and in settings files saved by **Maestro Control Center**, not on the Maestro itself
+- `UscCmd --getconf` is useful for exporting device settings, but it is not a reliable starting point for hand-authoring a `<Script>` block
+- Once you have a valid settings file saved from Maestro Control Center, you can use `UscCmd --configure FILE` later to load that complete settings file onto another Maestro
 
 ---
 

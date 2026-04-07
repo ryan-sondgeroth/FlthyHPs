@@ -207,6 +207,7 @@ namespace Config {
    constexpr uint8_t LEDS_PER_HP = 7;
    constexpr uint8_t SERVOS_PER_HP = 2;
    constexpr uint8_t HP_POSITIONS = 9;
+   constexpr uint8_t HP_CENTER_POSITION = 0;
 
    // I2C Address (for incoming command reception only - no servo I2C needed)
    constexpr uint8_t I2C_ADDRESS = 0x19;
@@ -688,6 +689,9 @@ void statusLedOn();
 void printHelp();
 void resetLEDTwitch(uint8_t hp);
 void resetHPTwitch(uint8_t hp);
+void initializeStartupState();
+bool isLedIdle(uint8_t hp);
+bool isHpIdle(uint8_t hp);
 
 
 #ifdef DEBUG
@@ -726,13 +730,6 @@ void setup() {
        maestro.setAcceleration(ch, Config::MAESTRO_ACCELERATION);
    }
 
-
-   // Send all servos to their configured home positions.
-   // Home positions are set per-channel in the Maestro Control Center software.
-   // This is safer than hardcoding center values as it respects each servo's
-   // physical safe resting position for your specific HP build.
-   maestro.goHome();
-
    // Initialize LEDs and Timers
    for (uint8_t i = 0; i < Config::HP_COUNT; i++) {
        neoStrips[i].updateType(HP_NEO_TYPE);
@@ -749,6 +746,8 @@ void setup() {
 
        wagTimers[i].setInterval(Config::WAG_INTERVAL);
    }
+
+   initializeStartupState();
 
    Serial.print(F("\nFlthyHPs v2."));
    Serial.println(Config::VERSION);
@@ -858,8 +857,7 @@ void loop() {
        }
 
        // Auto LED twitch
-       if (enableTwitchLED[i] > 0 && ledTwitchTimers[i].check() &&
-           (uint8_t)ledCommands[i].function > (uint8_t)LedFunction::SHORT_CIRCUIT) {
+       if (enableTwitchLED[i] > 0 && ledTwitchTimers[i].check() && isLedIdle(i)) {
 
            twitchLEDRunTime[i] = random(readLedTwitchRunInterval(i, 0), readLedTwitchRunInterval(i, 1));
            ledHaltTime[i] = millis();
@@ -924,8 +922,7 @@ void loop() {
        }
 
        // Auto HP twitch
-       if (enableTwitchHP[i] && hpTwitchTimers[i].check() &&
-           (uint8_t)hpCommands[i].function > (uint8_t)HpFunction::WAG_UP_DOWN) {
+       if (enableTwitchHP[i] && hpTwitchTimers[i].check() && isHpIdle(i)) {
            twitchHP(i);
            resetHPTwitch(i);
 
@@ -1320,6 +1317,36 @@ void setAutoMode(bool hpTwitch, uint8_t ledTwitchMode, bool offColorOverrideMode
        flushCommandArray(i, 1);
        ledOff(i);
    }
+}
+
+void initializeStartupState() {
+   for (uint8_t i = 0; i < Config::HP_COUNT; i++) {
+       resetAnimation(i);
+
+       // Start with the configured default LED pattern on every HP so the
+       // system provides an immediate power-on visual check.
+       ledCommands[i].function = (LedFunction)readDefaultLedTwitchCmd(i, 0);
+       ledCommands[i].option1 = readDefaultLedTwitchCmd(i, 1);
+       ledCommands[i].option2 = readDefaultLedTwitchCmd(i, 2);
+       ledCommands[i].halt = (Config::LED_STARTUP_BASE + 999UL) / 1000UL;
+       ledHaltTime[i] = millis();
+
+       // Always center the HPs on startup, independent of later auto-twitch state.
+       positionHP(i, Config::HP_CENTER_POSITION, Config::MAESTRO_MOVE_SPEED);
+
+       // Start fresh auto-twitch timers from boot so startup actions happen first.
+       resetLEDTwitch(i);
+       resetHPTwitch(i);
+   }
+}
+
+bool isLedIdle(uint8_t hp) {
+   return ledCommands[hp].function == LedFunction::DO_NOTHING ||
+          ledCommands[hp].function == LedFunction::SET_OFF_COLOR;
+}
+
+bool isHpIdle(uint8_t hp) {
+   return hpCommands[hp].function == HpFunction::DO_NOTHING;
 }
 
 void flushCommandArray(uint8_t hp, uint8_t type) {
